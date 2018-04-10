@@ -21,17 +21,19 @@
     return 0;
   }
 %}
-keywords "f""n"|"p""r""i""n""t""l""n"
+keywords "f""n"|"p""r""i""n""t""l""n"|"b""o""o""l"|"b""r""e""a""k"|"c""h""a""r"|"c""o""n""t""i""n""u""e"|"d""o"|"e""l""s""e"|"e""n""u""m"|"e""x""t""e""r""n"|"f""a""l""s""e"|"f""l""o""a""t"|"f""o""r"|"i""f"|"i""n"|"i""n""t"|"l""e""t"|"l""o""o""p"|"m""a""t""c""h"|"m""u""t"|"p""r""i""n""t"|"p""u""b"|"r""e""t""u""r""n"|"s""e""l""f"|"s""t""a""t""i""c"|"s""t""r"|"s""t""r""u""c""t"|"t""r""u""e"|"u""s""e"|"w""h""e""r""e"|"w""h""i""l""e"
 identifier [a-zA-Z_][a-zA-Z_0-9]*
-number [+-]+[0-9][0-9]*
-realnumber [+-]+[0-9][0-9]*"."[0-9][0-9]*
+number [+-]?[0-9][0-9]*
+realnumber [+-]?[0-9][0-9]*\.[0-9]+([eE][+-]?[0-9]+)?
 delimiter ","|":"|";"|"("|")"|"{"|"}"|"["|"]"
-Operator "+"|"-"|"*"|"++"|"--"|"%"|"<"|"<="|">="|">"|"=="|"!="|"&&"|"||"|"!"|"="|"+="|"-="|"*="|"/="
+operator "+"|"-"|"*"|"++"|"--"|"%"|"<"|"<="|">="|">"|"=="|"!="|"&&"|"||"|"!"|"="|"+="|"-="|"*="|"/="
 %%
 {keywords} { char* temp = malloc(10); toUpper(yytext, temp); tokensk(temp);}
 {identifier} {tokenString("id", yytext);}
-{realnumber} {printf("real number: %s\n", yytext);}
 {delimiter} {token(yytext);}
+{operator} {token(yytext);}
+{number} {tokenString("int", yytext);}
+{realnumber} {tokenString("real number", yytext);}
 
 "\"" {
       memset(strbuf, '\0', MAX_LINE_LENG);
@@ -68,8 +70,31 @@ Operator "+"|"-"|"*"|"++"|"--"|"%"|"<"|"<="|">="|">"|"=="|"!="|"&&"|"||"|"!"|"="
           strbuf[i] = c;
 	  i++;
         }
+        strcat(buf, strbuf);
       }
-      strcat(buf, strbuf);
+      else if(c == '*'){
+        strbuf[i] = c;
+        i++;
+        while(c = input()){
+          if(c == '\n'){
+	    //strbuf[i] = c;
+	    //i++;
+          }
+          else if(c == '*'){
+	    strbuf[i] = c;
+	    i++;
+	    c = input();
+            if(c == '/'){
+	      strbuf[i] = c;
+	      break;
+            }
+	    unput(c);
+	  }
+	  strbuf[i] = c;
+	  i++;
+        }
+	strcpy(buf, strbuf);
+      }
     }
 
 

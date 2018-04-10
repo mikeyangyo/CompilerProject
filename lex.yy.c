@@ -936,7 +936,6 @@ YY_RULE_SETUP
 	      strbuf[i] = c;
 	      break;
             }
-	    unput(c);
 	  }
 	  strbuf[i] = c;
 	  i++;
@@ -948,7 +947,7 @@ YY_RULE_SETUP
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 101 "project1.l"
+#line 100 "project1.l"
 {
      LIST;
      printf("%d: %s", num_of_Line, buf);
@@ -958,12 +957,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 107 "project1.l"
+#line 106 "project1.l"
 {LIST;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 109 "project1.l"
+#line 108 "project1.l"
 {
     LIST;
     printf("%d:%s\n", num_of_Line, buf);
@@ -973,10 +972,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 115 "project1.l"
+#line 114 "project1.l"
 ECHO;
 	YY_BREAK
-#line 980 "lex.yy.c"
+#line 979 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1977,7 +1976,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 115 "project1.l"
+#line 114 "project1.l"
 
 
 int main()

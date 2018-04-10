@@ -26,7 +26,7 @@ identifier [a-zA-Z_][a-zA-Z_0-9]*
 number [+-]?[0-9][0-9]*
 realnumber [+-]?[0-9][0-9]*\.[0-9]+([eE][+-]?[0-9]+)?
 delimiter ","|":"|";"|"("|")"|"{"|"}"|"["|"]"
-operator "+"|"-"|"*"|"++"|"--"|"%"|"<"|"<="|">="|">"|"=="|"!="|"&&"|"||"|"!"|"="|"+="|"-="|"*="|"/="
+operator "+"|"-"|"*"|"/"|"++"|"--"|"%"|"<"|"<="|">="|">"|"=="|"!="|"&&"|"||"|"!"|"="|"+="|"-="|"*="|"/="
 %%
 {keywords} { char* temp = malloc(10); toUpper(yytext, temp); tokensk(temp);}
 {identifier} {tokenString("id", yytext);}
@@ -36,66 +36,71 @@ operator "+"|"-"|"*"|"++"|"--"|"%"|"<"|"<="|">="|">"|"=="|"!="|"&&"|"||"|"!"|"="
 {realnumber} {tokenString("real number", yytext);}
 
 "\"" {
+      char *result = malloc(MAX_LINE_LENG);
+      strcat(buf, "\"");
       memset(strbuf, '\0', MAX_LINE_LENG);
+      memset(result, '\0', MAX_LINE_LENG);
       int i = 0;
       while(c = input()){
 	if(c == '\"'){
 	  c = input();
           if (c != '\"'){
 	    unput(c);
+	    strcat(buf, strbuf);
+	    strcat(result, strbuf);
 	    break;
           }
+          strcat(buf, strbuf);
+	  strcat(buf, "\"");
+	  strcat(result, strbuf);
+	  memset(strbuf, '\0', MAX_LINE_LENG);
+          i = 0;
         }
         strbuf[i] = c;
 	i++;
       }
-      strcat(buf, "\"");
-      strcat(buf, strbuf);
-      tokenString("string", strbuf);
+      tokenString("string", result);
     }
 
-"/" { 
+"//" { 
       memset(strbuf, '\0', MAX_LINE_LENG);
-      int i = 1;
+      int i = 2;
       strbuf[0] = '/';
-      c = input();
-      if(c == '/'){
-        strbuf[i] = c;
-        i++;
-        while(c = input()){
-          if(c == '\n'){
-            unput('\n');
-	    break;
-          }
-          strbuf[i] = c;
-	  i++;
+      strbuf[1] = '/';
+      while(c = input()){
+        if(c == '\n'){
+          unput('\n');
+          break;
         }
-        strcat(buf, strbuf);
-      }
-      else if(c == '*'){
         strbuf[i] = c;
-        i++;
-        while(c = input()){
-          if(c == '\n'){
-	    //strbuf[i] = c;
-	    //i++;
-          }
-          else if(c == '*'){
-	    strbuf[i] = c;
-	    i++;
-	    c = input();
-            if(c == '/'){
-	      strbuf[i] = c;
-	      break;
-            }
-	  }
+	i++;
+      }
+      strcat(buf, strbuf);
+    }
+"/*" {
+      memset(strbuf, '\0', MAX_LINE_LENG);
+      int i = 2;
+      strbuf[0] = '/';
+      strbuf[1] = '*';
+      while(c = input()){
+        if(c == '\n'){
+	  //strbuf[i] = c;
+	  //i++;
+        }
+        else if(c == '*'){
 	  strbuf[i] = c;
 	  i++;
-        }
-	strcpy(buf, strbuf);
+	  c = input();
+          if(c == '/'){
+	    strbuf[i] = c;
+	    break;
+          }
+	}
+	strbuf[i] = c;
+	i++;
       }
+      strcpy(buf, strbuf);
     }
-
 
 \n {
      LIST;

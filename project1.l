@@ -5,10 +5,64 @@
   #define tokensk(t) {LIST; printf("<%s>\n", t);}
   #define tokenInteger(t,i) {LIST; printf("<%s: %d>\n",t,i);}
   #define tokenString(t,s) {LIST; printf("<%s: %s>\n",t,s);}
+  typedef struct Id{
+    char *name;
+    struct Id *next;
+  }ID;
+  
+  ID *SymbolTable;
   int num_of_Line = 1;
+  int begining = 1;
   char c;
   char buf[MAX_LINE_LENG];
   char strbuf[MAX_LINE_LENG];
+
+  ID* Create(char *newName){
+    ID *newID = NULL;
+    newID = (ID*)malloc(sizeof(ID));
+    newID->name = newName;
+    newID->next = NULL;
+    return newID;
+  }
+
+  int Insert(ID *newID){
+    ID *current = SymbolTable;
+    while(current->next != NULL){
+      current = current->next;
+    }
+    current->next = newID;
+  }
+
+  int Dump(){
+    ID *current = SymbolTable;
+    printf("\nSymbol Table:\n");
+    while(current->next != NULL){
+      printf("%s\n", current->name);
+      current = current->next;
+    }
+    printf("%s\n", current->name);
+  }
+  
+  int Search(char *sname){
+    ID *current = SymbolTable;
+    int i = 0;
+    if((current->name, sname) == 0){
+      Dump();
+      return 0;
+    }
+    while(current->next != NULL){
+      if(strcmp(current->name,sname) == 0){
+        return i;
+      }
+      i++;
+      current = current->next;
+    }
+    if(strcmp(current->name, sname) == 0){
+      return i;
+    }
+    return -1;
+  }
+
   int toUpper(char* s, char* result){
     int i = 0;
     memset(result, '\0', 10);
@@ -31,7 +85,25 @@ boolean "t""r""u""e"|"f""a""l""s""e"
 %%
 {keywords} { char* temp = malloc(10); toUpper(yytext, temp); tokensk(temp);}
 {boolean} {tokenString("Boolean", yytext);}
-{identifier} {tokenString("id", yytext);}
+{identifier} {
+	       tokenString("id", yytext);
+	       char *cpystr = NULL;
+	       cpystr = (char*)malloc(yyleng);
+	       strcpy(cpystr, yytext);
+	       ID* newID = NULL;
+	       newID = (ID*)malloc(sizeof(ID));
+               newID = Create(cpystr);
+	       int i = 0;
+	       if(begining == 1){
+	         SymbolTable = newID;
+		 begining = 0;
+	       }
+	       else{
+		 if((i = Search(newID->name)) == -1){
+		   Insert(newID);
+		 }
+	       }
+	     }
 {delimiter} {token(yytext);}
 {operator} {token(yytext);}
 {number} {tokenString("int", yytext);}
@@ -121,5 +193,7 @@ boolean "t""r""u""e"|"f""a""l""s""e"
 %%
 int main()
 {
-yylex();
+  SymbolTable = (ID*)malloc(sizeof(ID));
+  yylex();
+  Dump(SymbolTable);
 }

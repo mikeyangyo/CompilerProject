@@ -910,7 +910,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 87 "project1.l"
-{tokenString("Boolean", yytext);}
+{char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
@@ -948,7 +948,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 109 "project1.l"
-{tokenString("int", yytext);}
+{tokenInteger("integer", atoi(yytext));}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP

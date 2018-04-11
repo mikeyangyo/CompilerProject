@@ -158,8 +158,12 @@ boolean "t""r""u""e"|"f""a""l""s""e"
       strbuf[1] = '*';
       while(c = input()){
         if(c == '\n'){
-	  //strbuf[i] = c;
-	  //i++;
+	  i = 0;
+          strcpy(buf, strbuf);
+	  printf("%d: %s\n", num_of_Line, buf);
+	  num_of_Line++;
+	  memset(buf, '\0', MAX_LINE_LENG);
+	  memset(strbuf, '\0', MAX_LINE_LENG);  
         }
         else if(c == '*'){
 	  strbuf[i] = c;
@@ -167,13 +171,16 @@ boolean "t""r""u""e"|"f""a""l""s""e"
 	  c = input();
           if(c == '/'){
 	    strbuf[i] = c;
+	    strcpy(buf, strbuf);
 	    break;
           }
+	  unput(c);
 	}
-	strbuf[i] = c;
-	i++;
+	else{
+	  strbuf[i] = c;
+	  i++;
+	}
       }
-      strcpy(buf, strbuf);
     }
 
 \n {

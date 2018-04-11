@@ -84,7 +84,7 @@ operator "+"|"-"|"*"|"/"|"+""+"|"-""-"|"%"|"<"|"<""="|">""="|">"|"=""="|"!""="|"
 boolean "t""r""u""e"|"f""a""l""s""e"
 %%
 {keywords} { char* temp = malloc(10); toUpper(yytext, temp); tokensk(temp);}
-{boolean} {tokenString("Boolean", yytext);}
+{boolean} {char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
 {identifier} {
 	       tokenString("id", yytext);
 	       char *cpystr = NULL;
@@ -106,7 +106,7 @@ boolean "t""r""u""e"|"f""a""l""s""e"
 	     }
 {delimiter} {token(yytext);}
 {operator} {token(yytext);}
-{number} {tokenString("int", yytext);}
+{number} {tokenInteger("integer", atoi(yytext));}
 {realnumber} {tokenString("real number", yytext);}
 
 "\"" {

@@ -1014,8 +1014,12 @@ YY_RULE_SETUP
       strbuf[1] = '*';
       while(c = input()){
         if(c == '\n'){
-	  //strbuf[i] = c;
-	  //i++;
+	  i = 0;
+          strcpy(buf, strbuf);
+	  printf("%d: %s\n", num_of_Line, buf);
+	  num_of_Line++;
+	  memset(buf, '\0', MAX_LINE_LENG);
+	  memset(strbuf, '\0', MAX_LINE_LENG);  
         }
         else if(c == '*'){
 	  strbuf[i] = c;
@@ -1023,19 +1027,22 @@ YY_RULE_SETUP
 	  c = input();
           if(c == '/'){
 	    strbuf[i] = c;
+	    strcpy(buf, strbuf);
 	    break;
           }
+	  unput(c);
 	}
-	strbuf[i] = c;
-	i++;
+	else{
+	  strbuf[i] = c;
+	  i++;
+	}
       }
-      strcpy(buf, strbuf);
     }
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 179 "project1.l"
+#line 186 "project1.l"
 {
      LIST;
      printf("%d: %s", num_of_Line, buf);
@@ -1045,12 +1052,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 185 "project1.l"
+#line 192 "project1.l"
 {LIST;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 187 "project1.l"
+#line 194 "project1.l"
 {
     LIST;
     printf("%d:%s\n", num_of_Line, buf);
@@ -1060,10 +1067,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 193 "project1.l"
+#line 200 "project1.l"
 ECHO;
 	YY_BREAK
-#line 1067 "lex.yy.c"
+#line 1074 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2064,7 +2071,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 193 "project1.l"
+#line 200 "project1.l"
 
 
 int main()

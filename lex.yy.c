@@ -568,12 +568,15 @@ char *yytext;
   char buf[MAX_LINE_LENG];
   char strbuf[MAX_LINE_LENG];
 
-  ID* Create(char *newName){
+  ID* CreateID(char *newName){
     ID *newID = NULL;
     newID = (ID*)malloc(sizeof(ID));
     newID->name = newName;
     newID->next = NULL;
     return newID;
+  }
+  ID* Create(){
+    return (ID*)malloc(sizeof(ID));
   }
 
   int Insert(ID *newID){
@@ -625,7 +628,7 @@ char *yytext;
     }
     return 0;
   }
-#line 629 "lex.yy.c"
+#line 632 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -843,9 +846,9 @@ YY_DECL
 		}
 
 	{
-#line 85 "project1.l"
+#line 88 "project1.l"
 
-#line 849 "lex.yy.c"
+#line 852 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -904,17 +907,17 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 86 "project1.l"
+#line 89 "project1.l"
 { char* temp = malloc(10); toUpper(yytext, temp); tokensk(temp);}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 87 "project1.l"
+#line 90 "project1.l"
 {char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 88 "project1.l"
+#line 91 "project1.l"
 {
 	       tokenString("id", yytext);
 	       char *cpystr = NULL;
@@ -922,7 +925,7 @@ YY_RULE_SETUP
 	       strcpy(cpystr, yytext);
 	       ID* newID = NULL;
 	       newID = (ID*)malloc(sizeof(ID));
-               newID = Create(cpystr);
+               newID = CreateID(cpystr);
 	       int i = 0;
 	       if(begining == 1){
 	         SymbolTable = newID;
@@ -937,27 +940,27 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 107 "project1.l"
+#line 110 "project1.l"
 {token(yytext);}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 108 "project1.l"
+#line 111 "project1.l"
 {token(yytext);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 109 "project1.l"
+#line 112 "project1.l"
 {tokenInteger("integer", atoi(yytext));}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 110 "project1.l"
+#line 113 "project1.l"
 {tokenString("real number", yytext);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 112 "project1.l"
+#line 115 "project1.l"
 {
       char *result = malloc(MAX_LINE_LENG);
       strcat(buf, "\"");
@@ -987,7 +990,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 139 "project1.l"
+#line 142 "project1.l"
 { 
       memset(strbuf, '\0', MAX_LINE_LENG);
       int i = 2;
@@ -1006,7 +1009,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 154 "project1.l"
+#line 157 "project1.l"
 {
       memset(strbuf, '\0', MAX_LINE_LENG);
       int i = 2;
@@ -1042,7 +1045,7 @@ YY_RULE_SETUP
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 186 "project1.l"
+#line 189 "project1.l"
 {
      LIST;
      printf("%d: %s", num_of_Line, buf);
@@ -1052,12 +1055,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 192 "project1.l"
+#line 195 "project1.l"
 {LIST;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 194 "project1.l"
+#line 197 "project1.l"
 {
     LIST;
     printf("%d:%s\n", num_of_Line, buf);
@@ -1067,10 +1070,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 200 "project1.l"
+#line 203 "project1.l"
 ECHO;
 	YY_BREAK
-#line 1074 "lex.yy.c"
+#line 1077 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2071,12 +2074,12 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 200 "project1.l"
+#line 203 "project1.l"
 
 
 int main()
 {
-  SymbolTable = (ID*)malloc(sizeof(ID));
+  SymbolTable = Create();
   yylex();
   Dump(SymbolTable);
 }

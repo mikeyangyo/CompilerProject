@@ -17,12 +17,15 @@
   char buf[MAX_LINE_LENG];
   char strbuf[MAX_LINE_LENG];
 
-  ID* Create(char *newName){
+  ID* CreateID(char *newName){
     ID *newID = NULL;
     newID = (ID*)malloc(sizeof(ID));
     newID->name = newName;
     newID->next = NULL;
     return newID;
+  }
+  ID* Create(){
+    return (ID*)malloc(sizeof(ID));
   }
 
   int Insert(ID *newID){
@@ -92,7 +95,7 @@ boolean "t""r""u""e"|"f""a""l""s""e"
 	       strcpy(cpystr, yytext);
 	       ID* newID = NULL;
 	       newID = (ID*)malloc(sizeof(ID));
-               newID = Create(cpystr);
+               newID = CreateID(cpystr);
 	       int i = 0;
 	       if(begining == 1){
 	         SymbolTable = newID;
@@ -200,7 +203,7 @@ boolean "t""r""u""e"|"f""a""l""s""e"
 %%
 int main()
 {
-  SymbolTable = (ID*)malloc(sizeof(ID));
+  SymbolTable = Create();
   yylex();
   Dump(SymbolTable);
 }

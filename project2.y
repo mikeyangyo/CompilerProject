@@ -20,7 +20,7 @@ semi:	 SEMICOLON
 #include "lex.yy.c"
 
 yyerror(msg)
-char *msg
+char *msg;
 {
   fprintf(stderr, "%s\n", msg);
 }

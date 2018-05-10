@@ -2,10 +2,10 @@
   #include "symbols.h"
   #define MAX_LINE_LENG 256
   #define LIST strcat(buf,yytext)
-  #define token(t) {LIST; printf("<'%s'>\n",t);}
-  #define tokensk(t) {LIST; printf("<%s>\n", t);}
-  #define tokenInteger(t,i) {LIST; printf("<%s: %d>\n",t,i);}
-  #define tokenString(t,s) {LIST; printf("<%s: %s>\n",t,s);}
+  #define token(t) {LIST; printf("<'%s'>\n",t); return(t);}
+  #define tokensk(t) {LIST; printf("<%s>\n", t); return(t);}
+  #define tokenInteger(t,i) {LIST; printf("<%s: %d>\n",t,i); return(t);}
+  #define tokenString(t,s) {LIST; printf("<%s: %s>\n",t,s); return(t);}
   
   ID *SymbolTable;
   int num_of_Line = 1;

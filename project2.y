@@ -70,18 +70,36 @@
 %token STRING
 %token COMMENT
 %token COMMENTB
+%token NEWLINE
+
+%start program
 %%
-/*program:        identifier semi
+
+program:        constant_declar COLON
                 {
-                Trace("Reducing to program\n");
+                  Trace("Reducing to program\n");
                 }
-                ;
-*/
-SEMI:      	semicolon
-                {
-                Trace("Reducing to semi\n");
-                }
-                ;
+		|
+		program NEWLINE
+		{
+		  Trace("Reducing to program\n");
+		}
+		;
+
+constant_declar: LET IDENTIFIER
+		|
+		constant_declar COLON type
+		|
+		constant_declar ASSIGN constant_expr
+		{
+		  Trace("Reducing to constant declarations\n");
+		}
+		;
+
+type:		INT|STR|BOOL|FLOAT;
+
+constant_expr:   STRING|NUMBER|TRUE|FALSE|REALNUMBER;
+
 %%
 #include "lex.yy.c"
 

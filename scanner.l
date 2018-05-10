@@ -26,16 +26,102 @@
     return 0;
   }
 %}
-keywords "f""n"|"p""r""i""n""t""l""n"|"b""o""o""l"|"b""r""e""a""k"|"c""h""a""r"|"c""o""n""t""i""n""u""e"|"d""o"|"e""l""s""e"|"e""n""u""m"|"e""x""t""e""r""n"|"f""l""o""a""t"|"f""o""r"|"i""f"|"i""n"|"i""n""t"|"l""e""t"|"l""o""o""p"|"m""a""t""c""h"|"m""u""t"|"p""r""i""n""t"|"p""u""b"|"r""e""t""u""r""n"|"s""e""l""f"|"s""t""a""t""i""c"|"s""t""r"|"s""t""r""u""c""t"|"u""s""e"|"w""h""e""r""e"|"w""h""i""l""e"
+fn "f""n"
+println "p""r""i""n""t""l""n"
+bool "b""o""o""l"
+break "b""r""e""a""k"
+char "c""h""a""r"
+continue "c""o""n""t""i""n""u""e"
+do "d""o"
+else "e""l""s""e"
+enum "e""n""u""m"
+extern "e""x""t""e""r""n"
+float "f""l""o""a""t"
+for "f""o""r"
+if "i""f"
+in "i""n"
+int "i""n""t"
+let "l""e""t"
+loop "l""o""o""p"
+match "m""a""t""c""h"
+mut "m""u""t"
+print "p""r""i""n""t"
+pub "p""u""b"
+return "r""e""t""u""r""n"
+self "s""e""l""f"
+static "s""t""a""t""i""c"
+str "s""t""r"
+struct "s""t""r""u""c""t"
+use "u""s""e"
+where "w""h""e""r""e"
+while "w""h""i""l""e"
+true "t""r""u""e"
+false "f""a""l""s""e"
 identifier [a-zA-Z_][a-zA-Z_0-9]*
 number [+-]?[0-9][0-9]*
 realnumber [+-]?[0-9][0-9]*\.[0-9]+([eE][+-]?[0-9]+)?
-delimiter ","|":"|";"|"("|")"|"{"|"}"|"["|"]"
-operator "+"|"-"|"*"|"/"|"+""+"|"-""-"|"%"|"<"|"<""="|">""="|">"|"=""="|"!""="|"&""&"|"|""|"|"!"|"="|"+""="|"-""="|"*""="|"/""="
-boolean "t""r""u""e"|"f""a""l""s""e"
+comma ","
+colon ":"
+semicolon ";"
+parenthesesL "("
+parenthesesR ")"
+sbracketsL "["
+sbracketsR "]"
+cbracketsL "{"
+cbracketsR "}"
+plus "+"
+minus "-"
+multiply "*"
+divide "/"
+dplus "+""+"
+dminus "-""-"
+mod "%"
+lessT "<"
+lessE "<""="
+largerT ">"
+largerE ">""="
+equal "=""="
+nequal "!""="
+and "&""&"
+or "|""|"
+not "!"
+assign "="
+plusE "+""="
+minusE "-""="
+multiplyE "*""="
+divideE "/""="
 %%
-{keywords} { char* temp = malloc(10); toUpper(yytext, temp); tokensk(temp);}
-{boolean} {char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
+{fn} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp);}
+{println} { char* temp = malloc(7); toUpper(yytext, temp); tokensk(temp);}
+{bool} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
+{break} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
+{char} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
+{continue} { char* temp = malloc(8); toUpper(yytext, temp); tokensk(temp);}
+{do} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp);}
+{else} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
+{enum} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
+{extern} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp);}
+{float} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
+{for} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
+{if} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp);}
+{in} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp);}
+{int} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
+{let} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
+{loop} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
+{match} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
+{mut} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
+{print} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
+{pub} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
+{return} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
+{self} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
+{static} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp);}
+{str} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
+{struct} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp);}
+{use} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
+{where} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
+{while} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
+{true} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
+{false} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
 {identifier} {
 	       tokenString("id", yytext);
 	       char *cpystr = NULL;
@@ -55,8 +141,36 @@ boolean "t""r""u""e"|"f""a""l""s""e"
 		 }
 	       }
 	     }
-{delimiter} {token(yytext);}
-{operator} {token(yytext);}
+{comma} {token(yytext);}
+{colon} {token(yytext);}
+{semicolon} {token(yytext);}
+{parenthesesL} {token(yytext);}
+{parenthesesR} {token(yytext);}
+{sbracketsL} {token(yytext);}
+{sbracketsR} {token(yytext);}
+{cbracketsL} {token(yytext);}
+{cbracketsR} {token(yytext);}
+{plus} {token(yytext);}
+{minus} {token(yytext);}
+{multiply} {token(yytext);}
+{divide} {token(yytext);}
+{dplus} {token(yytext);}
+{dminus} {token(yytext);}
+{mod} {token(yytext);}
+{lessT} {token(yytext);}
+{lessE} {token(yytext);}
+{largerT} {token(yytext);}
+{largerE} {token(yytext);}
+{equal} {token(yytext);}
+{nequal} {token(yytext);}
+{and} {token(yytext);}
+{or} {token(yytext);}
+{not} {token(yytext);}
+{assign} {token(yytext);}
+{plusE} {token(yytext);}
+{minusE} {token(yytext);}
+{multiplyE} {token(yytext);}
+{divideE} {token(yytext);}
 {number} {tokenInteger("integer", atoi(yytext));}
 {realnumber} {tokenString("real number", yytext);}
 

@@ -1,11 +1,12 @@
 %{
   #include "symbols.h"
+  #include "y.tab.h"
   #define MAX_LINE_LENG 256
   #define LIST strcat(buf,yytext)
-  #define token(t) {LIST; printf("<'%s'>\n",t); return(t);}
-  #define tokensk(t) {LIST; printf("<%s>\n", t); return(t);}
-  #define tokenInteger(t,i) {LIST; printf("<%s: %d>\n",t,i); return(t);}
-  #define tokenString(t,s) {LIST; printf("<%s: %s>\n",t,s); return(t);}
+  #define token(t) {LIST;}
+  #define tokensk(t) {LIST;}
+  #define tokenInteger(t,i) {LIST;}
+  #define tokenString(t,s) {LIST;}
   
   ID *SymbolTable;
   int num_of_Line = 1;
@@ -91,39 +92,40 @@ minusE "-""="
 multiplyE "*""="
 divideE "/""="
 %%
-{fn} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp);}
-{println} { char* temp = malloc(7); toUpper(yytext, temp); tokensk(temp);}
-{bool} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
-{break} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
-{char} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
-{continue} { char* temp = malloc(8); toUpper(yytext, temp); tokensk(temp);}
-{do} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp);}
-{else} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
-{enum} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
-{extern} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp);}
-{float} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
-{for} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
-{if} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp);}
-{in} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp);}
-{int} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
-{let} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
-{loop} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
-{match} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
-{mut} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
-{print} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
-{pub} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
-{return} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
-{self} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
-{static} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp);}
-{str} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
-{struct} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp);}
-{use} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp);}
-{where} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
-{while} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
-{true} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp);}
-{false} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp);}
+{fn} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(FN);}
+{println} { char* temp = malloc(7); toUpper(yytext, temp); tokensk(temp); return(PRINTLN);}
+{bool} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(BOOL);}
+{break} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(BREAK);}
+{char} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(CHAR);}
+{continue} { char* temp = malloc(8); toUpper(yytext, temp); tokensk(temp); return(CONTINUE);}
+{do} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(DO);}
+{else} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(ELSE);}
+{enum} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(ENUM);}
+{extern} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp); return(EXTERN);}
+{float} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(FLOAT);}
+{for} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(FOR);}
+{if} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(IF);}
+{in} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(IN);}
+{int} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(INT);}
+{let} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(LET);}
+{loop} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(LOOP);}
+{match} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(MATCH);}
+{mut} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(MUT);}
+{print} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(PRINT);}
+{pub} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(PUB);}
+{return} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(RETURN);}
+{self} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(SELF);}
+{static} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp); return(STATIC);}
+{str} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(STR);}
+{struct} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp); return(STRUCT);}
+{use} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(USE);}
+{where} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(WHERE);}
+{while} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(WHILE);}
+{true} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(TRUE);}
+{false} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(FALSE);}
 {identifier} {
 	       tokenString("id", yytext);
+	       return(IDENTIFIER);
 	       char *cpystr = NULL;
 	       cpystr = (char*)malloc(yyleng);
 	       strcpy(cpystr, yytext);
@@ -141,38 +143,38 @@ divideE "/""="
 		 }
 	       }
 	     }
-{comma} {token(yytext);}
-{colon} {token(yytext);}
-{semicolon} {token(yytext);}
-{parenthesesL} {token(yytext);}
-{parenthesesR} {token(yytext);}
-{sbracketsL} {token(yytext);}
-{sbracketsR} {token(yytext);}
-{cbracketsL} {token(yytext);}
-{cbracketsR} {token(yytext);}
-{plus} {token(yytext);}
-{minus} {token(yytext);}
-{multiply} {token(yytext);}
-{divide} {token(yytext);}
-{dplus} {token(yytext);}
-{dminus} {token(yytext);}
-{mod} {token(yytext);}
-{lessT} {token(yytext);}
-{lessE} {token(yytext);}
-{largerT} {token(yytext);}
-{largerE} {token(yytext);}
-{equal} {token(yytext);}
-{nequal} {token(yytext);}
-{and} {token(yytext);}
-{or} {token(yytext);}
-{not} {token(yytext);}
-{assign} {token(yytext);}
-{plusE} {token(yytext);}
-{minusE} {token(yytext);}
-{multiplyE} {token(yytext);}
-{divideE} {token(yytext);}
-{number} {tokenInteger("integer", atoi(yytext));}
-{realnumber} {tokenString("real number", yytext);}
+{comma} {token(yytext); return(COMMA);}
+{colon} {token(yytext); return(COLON);}
+{semicolon} {token(yytext); return(SEMICOLON);}
+{parenthesesL} {token(yytext); return(PARENTHESESL);}
+{parenthesesR} {token(yytext); return(PARENTHESESR);}
+{sbracketsL} {token(yytext); return(SBRACKETSL);}
+{sbracketsR} {token(yytext); return(SBRACKETSR);}
+{cbracketsL} {token(yytext); return(CBRACKETSL);}
+{cbracketsR} {token(yytext); return(CBRACKETSR);}
+{plus} {token(yytext); return(PLUS);}
+{minus} {token(yytext); return(MINUS);}
+{multiply} {token(yytext); return(MULTIPLY);}
+{divide} {token(yytext); return(DIVIDE);}
+{dplus} {token(yytext); return(DPLUS);}
+{dminus} {token(yytext); return(DMINUS);}
+{mod} {token(yytext); return(MOD);}
+{lessT} {token(yytext); return(LESST);}
+{lessE} {token(yytext); return(LESSE);}
+{largerT} {token(yytext); return(LARGERT);}
+{largerE} {token(yytext); return(LARGERE);}
+{equal} {token(yytext); return(EQUAL);}
+{nequal} {token(yytext); return(NEQUAL);}
+{and} {token(yytext); return(AND);}
+{or} {token(yytext); return(OR);}
+{not} {token(yytext); return(NOT);}
+{assign} {token(yytext); return(ASSIGN);}
+{plusE} {token(yytext); return(PLUSE);}
+{minusE} {token(yytext); return(MINUSE);}
+{multiplyE} {token(yytext); return(MULTIPLYE);}
+{divideE} {token(yytext); return(DIVIDEE);}
+{number} {tokenInteger("integer", atoi(yytext)); return(NUMBER);}
+{realnumber} {tokenString("real number", yytext); return(REALNUMBER);}
 
 "\"" {
       char *result = malloc(MAX_LINE_LENG);
@@ -199,6 +201,7 @@ divideE "/""="
 	i++;
       }
       tokenString("string", result);
+      return(STRING);
     }
 
 "//" { 
@@ -215,6 +218,7 @@ divideE "/""="
 	i++;
       }
       strcat(buf, strbuf);
+      return(COMMENT);
     }
 "/*" {
       memset(strbuf, '\0', MAX_LINE_LENG);
@@ -246,6 +250,7 @@ divideE "/""="
 	  i++;
 	}
       }
+      return(COMMENTB);
     }
 
 \n {

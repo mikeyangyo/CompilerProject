@@ -4,7 +4,72 @@
 
 /* tokens */
 %token SEMICOLON
-%token idenifier
+%token IDENTIFIER
+%token FN
+%token PRINTLN
+%token BOOL
+%token BREAK
+%token CHAR
+%token CONTINUE
+%token DO
+%token ELSE
+%token ENUM
+%token EXTERN
+%token FLOAT
+%token FOR
+%token IF
+%token IN
+%token INT
+%token LET
+%token LOOP
+%token MATCH
+%token MUT
+%token PRINT
+%token PUB
+%token RETURN
+%token SELF
+%token STATIC
+%token STR
+%token STRUCT
+%token USE
+%token WHERE
+%token WHILE
+%token TRUE
+%token FALSE
+%token COMMA
+%token COLON
+%token PARENTHESESL
+%token PARENTHESESR
+%token SBRACKETSL
+%token SBRACKETSR
+%token CBRACKETSL
+%token CBRACKETSR
+%token PLUS
+%token MINUS
+%token MULTIPLY
+%token DIVIDE
+%token DPLUS
+%token DMINUS
+%token MOD
+%token LESST
+%token LESSE
+%token LARGERT
+%token LARGERE
+%token EQUAL
+%token NEQUAL
+%token AND
+%token OR
+%token NOT
+%token ASSIGN
+%token PLUSE
+%token MINUSE
+%token MULTIPLYE
+%token DIVIDEE
+%token NUMBER
+%token REALNUMBER
+%token STRING
+%token COMMENT
+%token COMMENTB
 %%
 /*program:        identifier semi
                 {
@@ -12,7 +77,7 @@
                 }
                 ;
 */
-semi:           SEMICOLON
+SEMI:      	semicolon
                 {
                 Trace("Reducing to semi\n");
                 }
@@ -34,7 +99,6 @@ main(int argc, char **argv)
         exit(1);
     }
     yyin = fopen(argv[1], "r");         /* open input file */
-    printf("filename = %s\n", argv[1]);
     /* perform parsing */
     if (yyparse() == 1)                 /* parsing */
         yyerror("Parsing error !");     /* syntax error */

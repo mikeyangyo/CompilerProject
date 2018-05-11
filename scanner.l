@@ -106,8 +106,8 @@ divideE "/""="
 {for} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(FOR);}
 {if} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(IF);}
 {in} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(IN);}
-{int} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); printf("4\n"); return(INT);}
-{let} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); printf("1\n"); return(LET);}
+{int} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(INT);}
+{let} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(LET);}
 {loop} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(LOOP);}
 {match} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(MATCH);}
 {mut} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(MUT);}
@@ -121,11 +121,10 @@ divideE "/""="
 {use} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(USE);}
 {where} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(WHERE);}
 {while} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(WHILE);}
-{true} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); printf("7\n");return(TRUE);}
+{true} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(TRUE);}
 {false} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(FALSE);}
 {identifier} {
 	       tokenString("id", yytext);
-    	       printf("2\n");
 	       return(IDENTIFIER);
 	       char *cpystr = NULL;
 	       cpystr = (char*)malloc(yyleng);
@@ -145,7 +144,7 @@ divideE "/""="
 	       }
 	     }
 {comma} {token(yytext); return(COMMA);}
-{colon} {token(yytext); printf("3\n");return(COLON);}
+{colon} {token(yytext); return(COLON);}
 {semicolon} {token(yytext); return(SEMICOLON);}
 {parenthesesL} {token(yytext); return(PARENTHESESL);}
 {parenthesesR} {token(yytext); return(PARENTHESESR);}
@@ -169,12 +168,12 @@ divideE "/""="
 {and} {token(yytext); return(AND);}
 {or} {token(yytext); return(OR);}
 {not} {token(yytext); return(NOT);}
-{assign} {token(yytext); printf("5\n");return(ASSIGN);}
+{assign} {token(yytext); return(ASSIGN);}
 {plusE} {token(yytext); return(PLUSE);}
 {minusE} {token(yytext); return(MINUSE);}
 {multiplyE} {token(yytext); return(MULTIPLYE);}
 {divideE} {token(yytext); return(DIVIDEE);}
-{number} {tokenInteger("integer", atoi(yytext)); printf("6\n"); return(NUMBER);}
+{number} {tokenInteger("integer", atoi(yytext)); return(NUMBER);}
 {realnumber} {tokenString("real number", yytext); return(REALNUMBER);}
 
 "\"" {
@@ -202,7 +201,6 @@ divideE "/""="
 	i++;
       }
       tokenString("string", result);
-      printf("%s\n", result);
       return(STRING);
     }
 
@@ -260,8 +258,6 @@ divideE "/""="
      printf("%d: %s", num_of_Line, buf);
      num_of_Line++;
      buf[0] = '\0';
-printf("10\n");
-     return(NEWLINE);
    }
 [ \t]* {LIST;}
 

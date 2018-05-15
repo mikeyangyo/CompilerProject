@@ -2,9 +2,20 @@
 #define Trace(t)        printf(t)
 %}
 
+%union{
+  float fval;
+  int ival;
+  char *sval;
+}
+
+%type <sval> ident
+%type <ival> constant_i_expr
+%type <fval> constant_f_expr
+%type <sval> constant_s_expr
+%type <sval> constant_b_expr
 /* tokens */
 %token SEMICOLON
-%token IDENTIFIER
+%token <sval> IDENTIFIER
 %token FN
 %token PRINTLN
 %token BOOL
@@ -34,8 +45,8 @@
 %token USE
 %token WHERE
 %token WHILE
-%token TRUE
-%token FALSE
+%token <sval> TRUE
+%token <sval> FALSE
 %token COMMA
 %token COLON
 %token PARENTHESESL
@@ -65,9 +76,9 @@
 %token MINUSE
 %token MULTIPLYE
 %token DIVIDEE
-%token NUMBER
-%token REALNUMBER
-%token STRING
+%token <ival> NUMBER
+%token <fval> REALNUMBER
+%token <sval> STRING
 
 %start program
 %left OR
@@ -77,7 +88,6 @@
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
 %left UMINUS
-
 %%
 
 program:        normal_declars func_declars
@@ -137,68 +147,146 @@ func_declars:	func_declars func_declar
                 }
 		;
 
-constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
+constant_declar:LET ident COLON type ASSIGN constant_s_expr
 		{
 		  Trace("Reducing to constant declaration w/ type and initial value\n");
 		}
 		|
-		LET IDENTIFIER ASSIGN constant_expr
+		LET ident ASSIGN constant_s_expr
 		{
 		  Trace("Reducing to constant declaration w/ initial value\n");
+		  ID *nowID;
+		  if((nowID = Search(Top(SymbolTables)->table, $2)) == NULL){
+		    printf("Error: ID doesn't exist!\n");
+		  }
+		  else{
+		    char *temp = strdup($4);
+		    void *val = (void*)temp;
+		    nowID->type = "nstr";
+		    nowID->value = (char*)val;
+		    printf("%s\n",(char*)nowID->value);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		}
+		|
+		LET ident COLON type ASSIGN constant_b_expr
+		{
+		  Trace("Reducing to constant declaration w/ type and initial value\n");
+		}
+		|
+		LET ident ASSIGN constant_b_expr
+		{
+		  Trace("Reducing to constant declaration w/ initial value\n");
+		  ID *nowID;
+		  if((nowID = Search(Top(SymbolTables)->table, $2)) == NULL){
+		    printf("Error: ID doesn't exist!\n");
+		  }
+		  else{
+		    char *temp = strdup($4);
+		    void *val = (void*)temp;
+		    nowID->type = "nbool";
+		    nowID->value = val;
+		    printf("%s\n",(char*)nowID->value);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		}
+		|
+		LET ident COLON type ASSIGN constant_i_expr
+		{
+		  Trace("Reducing to constant declaration w/ type and initial value\n");
+		}
+		|
+		LET ident ASSIGN constant_i_expr
+		{
+		  Trace("Reducing to constant declaration w/ initial value\n");
+		  ID *nowID;
+		  if((nowID = Search(Top(SymbolTables)->table, $2)) == NULL){
+		    printf("Error: ID doesn't exist!\n");
+		  }
+		  else{
+		    int *temp = (int*)malloc(sizeof(int));
+		    *temp = $4;
+		    void *val = (void*)temp;
+		    nowID->type = "nint";
+		    nowID->value = val;
+		    Dump(Top(SymbolTables)->table);
+		  }
+		}
+		|
+		LET ident COLON type ASSIGN constant_f_expr
+		{
+		  Trace("Reducing to constant declaration w/ type and initial value\n");
+		}
+		|
+		LET ident ASSIGN constant_f_expr
+		{
+		  Trace("Reducing to constant declaration w/ initial value\n");
+		  ID *nowID;
+		  if((nowID = Search(Top(SymbolTables)->table, $2)) == NULL){
+		    printf("Error: ID doesn't exist!\n");
+		  }
+		  else{
+		    float *temp = (float*)malloc(sizeof(float));
+		    *temp = $4;
+		    void *val = (void*)temp;
+		    nowID->type = "nfloat";
+		    nowID->value = val;
+		    Dump(Top(SymbolTables)->table);
+		  }
 		}
 		;
 
-variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
+variable_declar:LET MUT ident COLON type ASSIGN constant_expr
 		{
 		  Trace("Reducing to variable declaration w/ type and initial value\n");
 		}
 		|
-		LET MUT IDENTIFIER COLON type
+		LET MUT ident COLON type
 		{
 		  Trace("Reducing to variable declaration w/ type\n");
 		}
 		|
-		LET MUT IDENTIFIER ASSIGN constant_expr
+		LET MUT ident ASSIGN constant_expr
 		{
 		  Trace("Reducing to variable declaration w/ initial value\n");
 		}
 		|
-		LET MUT IDENTIFIER
+		LET MUT ident
 		{
 		  Trace("Reducing to variable declaration w/ no type and initial value\n");
 		}
 		;
 
-array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA constant_expr SBRACKETSR
+array_declar:	LET MUT ident SBRACKETSL type COMMA constant_expr SBRACKETSR
 		{
 		  Trace("Reducing to array declaration w/ type and # of elements\n");
 		}
 		;
 
-func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT type block
+func_declar:	FN ident PARENTHESESL func_argument PARENTHESESR MINUS LARGERT type block
 		{
 		  Trace("Reducing to function declaration w/ arguments and return type\n");
 		}
 		|
-		FN IDENTIFIER PARENTHESESL PARENTHESESR MINUS LARGERT type block
+		FN ident PARENTHESESL PARENTHESESR MINUS LARGERT type block
 		{
 		  Trace("Reducing to function declaration w/ return type\n");
 		}
 		|
-		FN IDENTIFIER PARENTHESESL PARENTHESESR block
+		FN ident PARENTHESESL PARENTHESESR block
 		{
 		  Trace("Reducing to function declaration w/ no arguments and no return type\n");
 		}
 		|
-		FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR block
+		FN ident PARENTHESESL func_argument PARENTHESESR block
 		{
 		  Trace("Reducing to function declaration w/ arguments\n");
 		}
 		;
 
-func_argument:	func_argument COMMA IDENTIFIER COLON type
+func_argument:	func_argument COMMA ident COLON type
 		|
-		IDENTIFIER COLON type
+		ident COLON type
 		;
 
 stmts:		stmts simple_stmt SEMICOLON
@@ -263,12 +351,12 @@ block:		CBRACKETSL normal_declars stmts CBRACKETSR
 		}
 		;
 
-simple_stmt:	IDENTIFIER ASSIGN expr
+simple_stmt:	ident ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
 		}
 		|
-		IDENTIFIER SBRACKETSL SBRACKETSR ASSIGN expr
+		ident SBRACKETSL SBRACKETSR ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
 		}
@@ -283,7 +371,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		  Trace("Reducing to simple statement\n");
 		}
 		|
-		READ IDENTIFIER
+		READ ident
 		{
 		  Trace("Reducing to simple statement\n");
 		}
@@ -349,7 +437,7 @@ expr:		integer_expr
 		  Trace("Reducing to expression\n");
 		}
 		|
-		IDENTIFIER
+		ident
 		{
 		  Trace("Reducing to expression\n");
 		}
@@ -375,7 +463,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		|
 		NUMBER
 		|
-		IDENTIFIER
+		ident
 		;
 
 boolean_expr:	boolean_expr AND boolean_expr
@@ -389,13 +477,38 @@ boolean_expr:	boolean_expr AND boolean_expr
 		FALSE
 		;
 
-constant_expr:  STRING|NUMBER|TRUE|FALSE|REALNUMBER
+constant_s_expr:STRING
+		{
+		  $$ = yytext;
+		}
+		;
+constant_b_expr:TRUE
+		{
+		  $$ = "true";
+		}
+		|
+		FALSE
+		{
+		  $$ = "false";
+		}
 		;
 
-array_ref:	IDENTIFIER SBRACKETSL integer_expr SBRACKETSR
+constant_i_expr:NUMBER
+		{
+		  $$ = atoi(yytext);
+		}
 		;
 
-func_invoke:	IDENTIFIER PARENTHESESL func_invoke_arg PARENTHESESR
+constant_f_expr:REALNUMBER
+		{
+		  $$ = atof(yytext);
+		}
+		;
+
+array_ref:	ident SBRACKETSL integer_expr SBRACKETSR
+		;
+
+func_invoke:	ident PARENTHESESL func_invoke_arg PARENTHESESR
 		{
 		  Trace("Reducing to function invocation\n");
 		}
@@ -428,11 +541,11 @@ type:		INT|STR|BOOL|FLOAT
 
 ident:		IDENTIFIER
 		{
-		  /*if(Search(SymbolTables[numberOfTables], $1) == -1){
-		    Insert(SymbolTables[numberOfTables], $1);
+		  if(Search(Top(SymbolTables)->table, $1) == NULL){
+		    ID *newID = CreateID($1);
+		    Insert(Top(SymbolTables)->table, CreateID($1));
 		  }
-		  Dump(SymbolTables[numberOfTables]);*/
-*/
+		  $$ = $1;
 		}
 		;
 %%
@@ -454,6 +567,9 @@ main(int argc, char **argv)
         exit(1);
     }
     yyin = fopen(argv[1], "r");         /* open input file */
+
+    /* create the stack of tables */
+    SymbolTables = stkCreate();
 
     /* perform parsing */
     if (yyparse() == 1)                 /* parsing */

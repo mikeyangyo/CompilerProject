@@ -8,7 +8,6 @@
   #define tokenInteger(t,i) {LIST;}
   #define tokenString(t,s) {LIST;}
   
-  ID *SymbolTable;
   int num_of_Line = 1;
   int begining = 1;
   char c;
@@ -125,23 +124,8 @@ divideE "/""="
 {false} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(FALSE);}
 {identifier} {
 	       tokenString("id", yytext);
+	       yylval.sval = strdup(yytext);
 	       return(IDENTIFIER);
-	       char *cpystr = NULL;
-	       cpystr = (char*)malloc(yyleng);
-	       strcpy(cpystr, yytext);
-	       ID* newID = NULL;
-	       newID = (ID*)malloc(sizeof(ID));
-               newID = CreateID(cpystr);
-	       int i = 0;
-	       if(begining == 1){
-	         SymbolTable = newID;
-		 begining = 0;
-	       }
-	       else{
-		 if((i = Search(SymbolTable, newID->name)) == -1){
-		   Insert(SymbolTable, newID);
-		 }
-	       }
 	     }
 {comma} {token(yytext); return(COMMA);}
 {colon} {token(yytext); return(COLON);}
@@ -200,7 +184,9 @@ divideE "/""="
         strbuf[i] = c;
 	i++;
       }
-      tokenString("string", result);
+      yytext = strdup(result);
+      strcat(buf, "\"");
+      //tokenString("string", "");
       return(STRING);
     }
 

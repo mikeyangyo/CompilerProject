@@ -3,9 +3,7 @@
 typedef struct Id{
   char *name;
   char *type;
-  int int_bool_val;
-  float real_number_val;
-  char *str_val;
+  void *value;
   struct Id *next;
 }ID;
 
@@ -23,12 +21,15 @@ int Insert(ID *givenList, ID *newID);
 // dump the link
 int Dump(ID *givenList);
 // search where the ID with sname is
-int Search(ID *givenList, char *sname);
-
+ID* Search(ID *givenList, char *sname);
+// print id value
+void printval(ID *nowID);
 // create a stk
 IDstk* stkCreate();
 // return top of stk
-ID* top(IDstk* givenSTK);
+IDstk* Top(IDstk *givenSTK);
 // pop the top of stk
-void pop(IDstk* givenSTK);
+void Pop(IDstk *givenSTK);
+// insert the table into stk
+void stkInsert(IDstk *givenSTK, IDstk *newTable);
 #endif

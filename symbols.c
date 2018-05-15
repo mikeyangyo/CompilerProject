@@ -4,6 +4,8 @@ ID* CreateID(char *newName){
   ID *newID = NULL;
   newID = (ID*)malloc(sizeof(ID));
   newID->name = newName;
+  newID->type = NULL;
+  newID->value = NULL;
   newID->next = NULL;
   return newID;
 }
@@ -15,6 +17,13 @@ ID* Create(){
 int Insert(ID *givenList, ID *newID){
   ID *current = givenList;
   int i = 0;
+  if(current->name == NULL && current->next == NULL){
+    current->name = newID->name;
+    current->type = NULL;
+    current->value = NULL;
+    current->next = NULL;
+    return 0;
+  }
   while(current->next != NULL){
     current = current->next;
     i++;
@@ -27,45 +36,84 @@ int Dump(ID* givenList){
   ID *current = givenList;
   printf("\nSymbol Table:\n");
   while(current->next != NULL){
-    printf("%s\n", current->name);
+    printval(current);
     current = current->next;
   }
-  printf("%s\n", current->name);
+  printval(current);
+  printf("\n");
 }
 
-int Search(ID *givenList, char *sname){
+ID* Search(ID *givenList, char *sname){
   ID *current = givenList;
-  int i = 0;
+
+  if(current->name == NULL){
+    return NULL;
+  }
+
   while(current->next != NULL){
     if(strcmp(current->name, sname) == 0){
-      return i;
+      return current;
     }
-    i++;
     current = current->next;
   }
+
   if(strcmp(current->name, sname) == 0){
-    return i;
+    return current;
   }
-  return -1;
+
+  return NULL;
+}
+
+// print id value
+void printval(ID *nowID){
+  if(strcmp(nowID->type, "int") == 0){
+    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *((int*)nowID->value));
+  }
+  else if(strcmp(nowID->type, "nint") == 0){
+    printf("%s\t%s\t%d\n", nowID->name, NULL, *((int*)nowID->value));
+  }
+  else if(strcmp(nowID->type, "str") == 0){
+    printf("%s\t%s\t%s\n", nowID->name, nowID->type, (char*)nowID->value);
+  }
+  else if(strcmp(nowID->type, "nstr") == 0){
+    printf("%s\t%s\t%s\n", nowID->name, NULL, (char*)nowID->value);
+  }
+  else if(strcmp(nowID->type, "float") == 0){
+    printf("%s\t%s\t%2f\n", nowID->name, nowID->type, *((float*)nowID->value));
+  }
+  else if(strcmp(nowID->type, "nfloat") == 0){
+    printf("%s\t%s\t%2f\n", nowID->name, NULL, *((float*)nowID->value));
+  }
+  else if(strcmp(nowID->type, "bool") == 0){
+    printf("%s\t%s\t%s\n", nowID->name, nowID->type, (char*)nowID->value);
+  }
+  else if(strcmp(nowID->type, "nbool") == 0){
+    printf("%s\t%s\t%s\n", nowID->name, NULL, (char*)nowID->value);
+  }
+  else{
+    printf("Error: ID type is wrong, type = %s\n", nowID->type);
+  }
 }
 
 IDstk* stkCreate(){
-  return (IDstk*)malloc(sizeof(IDstk));
-  
+  IDstk* newSTK = (IDstk*)malloc(sizeof(IDstk));
+  newSTK->table = Create();
+  newSTK->next = NULL;
+  return newSTK;
 }
 // return top of stk
-ID* top(IDstk* givenSTK){
+IDstk* Top(IDstk* givenSTK){
   IDstk *nowstk = givenSTK;
   while(nowstk->next != NULL){
     nowstk = nowstk->next;
   }
   if(nowstk->table != NULL){
-    return nowstk->table;
+    return nowstk;
   }
   return NULL;
 }
 // pop the top of stk
-void pop(IDstk* givenSTK){
+void Pop(IDstk* givenSTK){
   IDstk *nowstk = givenSTK;
   IDstk *newstk = givenSTK;
   int i = 0;
@@ -80,4 +128,8 @@ void pop(IDstk* givenSTK){
   }
   newstk->next = NULL;
 }
-
+// insert the table into stk
+void stkInsert(IDstk *givenSTK, IDstk *newTable){
+  IDstk *nowtop = Top(givenSTK);
+  nowtop->next = newTable;
+}

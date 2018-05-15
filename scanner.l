@@ -218,7 +218,6 @@ divideE "/""="
 	i++;
       }
       strcat(buf, strbuf);
-      return(COMMENT);
     }
 "/*" {
       memset(strbuf, '\0', MAX_LINE_LENG);
@@ -250,7 +249,6 @@ divideE "/""="
 	  i++;
 	}
       }
-      return(COMMENTB);
     }
 
 \n {

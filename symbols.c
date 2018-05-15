@@ -48,3 +48,36 @@ int Search(ID *givenList, char *sname){
   }
   return -1;
 }
+
+IDstk* stkCreate(){
+  return (IDstk*)malloc(sizeof(IDstk));
+  
+}
+// return top of stk
+ID* top(IDstk* givenSTK){
+  IDstk *nowstk = givenSTK;
+  while(nowstk->next != NULL){
+    nowstk = nowstk->next;
+  }
+  if(nowstk->table != NULL){
+    return nowstk->table;
+  }
+  return NULL;
+}
+// pop the top of stk
+void pop(IDstk* givenSTK){
+  IDstk *nowstk = givenSTK;
+  IDstk *newstk = givenSTK;
+  int i = 0;
+  while(nowstk->next != NULL){
+    nowstk = nowstk->next;
+    i++;
+  }
+  free(nowstk->table);
+  free(nowstk->next);
+  for(i = i-1;i>=0;i--){
+    newstk = newstk->next;
+  }
+  newstk->next = NULL;
+}
+

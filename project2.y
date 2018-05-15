@@ -68,8 +68,6 @@
 %token NUMBER
 %token REALNUMBER
 %token STRING
-%token COMMENT
-%token COMMENTB
 
 %start program
 %left OR
@@ -79,6 +77,7 @@
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
 %left UMINUS
+
 %%
 
 program:        normal_declars func_declars
@@ -265,18 +264,39 @@ block:		CBRACKETSL normal_declars stmts CBRACKETSR
 		;
 
 simple_stmt:	IDENTIFIER ASSIGN expr
+		{
+		  Trace("Reducing to simple statement\n");
+		}
 		|
 		IDENTIFIER SBRACKETSL SBRACKETSR ASSIGN expr
+		{
+		  Trace("Reducing to simple statement\n");
+		}
 		|
 		PRINT expr
+		{
+		  Trace("Reducing to simple statement\n");
+		}
 		|
 		PRINTLN expr
+		{
+		  Trace("Reducing to simple statement\n");
+		}
 		|
 		READ IDENTIFIER
+		{
+		  Trace("Reducing to simple statement\n");
+		}
 		|
 		RETURN
+		{
+		  Trace("Reducing to simple statement\n");
+		}
 		|
 		RETURN expr
+		{
+		  Trace("Reducing to simple statement\n");
+		}
 		;
 
 expr:		integer_expr
@@ -406,8 +426,19 @@ loop:		WHILE PARENTHESESL boolean_expr PARENTHESESR block
 type:		INT|STR|BOOL|FLOAT
 		;
 
+ident:		IDENTIFIER
+		{
+		  /*if(Search(SymbolTables[numberOfTables], $1) == -1){
+		    Insert(SymbolTables[numberOfTables], $1);
+		  }
+		  Dump(SymbolTables[numberOfTables]);*/
+*/
+		}
+		;
 %%
 #include "lex.yy.c"
+
+IDstk *SymbolTables = NULL;
 
 yyerror(msg)
 char *msg;
@@ -423,6 +454,7 @@ main(int argc, char **argv)
         exit(1);
     }
     yyin = fopen(argv[1], "r");         /* open input file */
+
     /* perform parsing */
     if (yyparse() == 1)                 /* parsing */
         yyerror("Parsing error !");     /* syntax error */

@@ -93,7 +93,7 @@ divideE "/""="
 %%
 {fn} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(FN);}
 {println} { char* temp = malloc(7); toUpper(yytext, temp); tokensk(temp); return(PRINTLN);}
-{bool} { char* temp = malloc(4); tokensk(temp); yylval.sval = yytext;return(BOOL);}
+{bool} { char* temp = malloc(4); tokensk(temp); yylval.sval = yytext; return(BOOL);}
 {break} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(BREAK);}
 {char} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(CHAR);}
 {continue} { char* temp = malloc(8); toUpper(yytext, temp); tokensk(temp); return(CONTINUE);}

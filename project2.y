@@ -361,8 +361,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    newID->type = $5;
 		  }
 		  else{
-		    char *temp;
-		    strcpy(temp, "n");
+		    char *temp = strdup("n");
 		    strcat(temp, $5);
 
 		    if(strcmp(temp, newID->type) == 0){
@@ -448,14 +447,33 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
-		    printf("Error: %s already exists!", $3);
+		    printf("Error: %s already exists!\n", $3);
 		  }
 		}
 		;
 
-array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA constant_expr SBRACKETSR
+array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA NUMBER SBRACKETSR
 		{
 		  Trace("Reducing to array declaration w/ type and # of elements\n");
+		  ID * newID = Search(Top(SymbolTables)->table, $3);
+		  int existed = 1;
+
+		  if(newID == NULL){
+		    newID = CreateID($3);
+		    existed = 0;
+		  }
+		  int *temp = (int*)malloc(sizeof(int));
+		  *temp = atoi($7);
+
+		  void *val = (void*)temp;
+		  char *stemp = strdup($5);
+		  strcat(stemp, "_array");
+		  newID->type = stemp;
+		  newID->value = val;
+		  if(existed == 0){
+		    Insert(Top(SymbolTables)->table, newID);
+		  }
+		  Dump(Top(SymbolTables)->table);
 		}
 		;
 

@@ -70,28 +70,72 @@ void printval(ID *nowID){
     printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
   }
   else if(strcmp(nowID->type, "int") == 0){
+    if(nowID->value == NULL){
+      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      return;
+    }
     printf("%s\t%s\t%d\n", nowID->name, nowID->type, *((int*)nowID->value));
   }
   else if(strcmp(nowID->type, "nint") == 0){
+    if(nowID->value == NULL){
+      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      return;
+    }
     printf("%s\t%s\t%d\n", nowID->name, NULL, *((int*)nowID->value));
   }
   else if(strcmp(nowID->type, "str") == 0){
+    if(nowID->value == NULL){
+      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      return;
+    }
     printf("%s\t%s\t%s\n", nowID->name, nowID->type, (char*)nowID->value);
   }
   else if(strcmp(nowID->type, "nstr") == 0){
+    if(nowID->value == NULL){
+      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      return;
+    }
     printf("%s\t%s\t%s\n", nowID->name, NULL, (char*)nowID->value);
   }
   else if(strcmp(nowID->type, "float") == 0){
+    if(nowID->value == NULL){
+      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      return;
+    }
     printf("%s\t%s\t%2f\n", nowID->name, nowID->type, *((float*)nowID->value));
   }
   else if(strcmp(nowID->type, "nfloat") == 0){
+    if(nowID->value == NULL){
+      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      return;
+    }
     printf("%s\t%s\t%2f\n", nowID->name, NULL, *((float*)nowID->value));
   }
   else if(strcmp(nowID->type, "bool") == 0){
+    if(nowID->value == NULL){
+      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      return;
+    }
     printf("%s\t%s\t%s\n", nowID->name, nowID->type, (char*)nowID->value);
   }
   else if(strcmp(nowID->type, "nbool") == 0){
+    if(nowID->value == NULL){
+      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      return;
+    }
     printf("%s\t%s\t%s\n", nowID->name, NULL, (char*)nowID->value);
+  }
+  else if(strcmp(nowID->type, "int_array") == 0){
+    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
+  }
+  else if(strcmp(nowID->type, "str_array") == 0){
+    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
+  }
+  else if(strcmp(nowID->type, "float_array") == 0){
+    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
+  }
+  else if(strcmp(nowID->type, "bool_array") == 0){
+    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
   }
   else{
     printf("Error: ID type is wrong, type = %s\n", nowID->type);

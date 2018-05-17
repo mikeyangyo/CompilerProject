@@ -19,9 +19,9 @@ int Insert(ID *givenList, ID *newID){
   int i = 0;
   if(current->name == NULL && current->next == NULL){
     current->name = newID->name;
-    current->type = NULL;
-    current->value = NULL;
-    current->next = NULL;
+    current->type = newID->type;
+    current->value = newID->value;
+    current->next = newID->next;
     return 0;
   }
   while(current->next != NULL){
@@ -66,7 +66,10 @@ ID* Search(ID *givenList, char *sname){
 
 // print id value
 void printval(ID *nowID){
-  if(strcmp(nowID->type, "int") == 0){
+  if(nowID->type == NULL){
+    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+  }
+  else if(strcmp(nowID->type, "int") == 0){
     printf("%s\t%s\t%d\n", nowID->name, nowID->type, *((int*)nowID->value));
   }
   else if(strcmp(nowID->type, "nint") == 0){

@@ -93,7 +93,7 @@ divideE "/""="
 %%
 {fn} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(FN);}
 {println} { char* temp = malloc(7); toUpper(yytext, temp); tokensk(temp); return(PRINTLN);}
-{bool} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(BOOL);}
+{bool} { char* temp = malloc(4); tokensk(temp); yylval.sval = yytext;return(BOOL);}
 {break} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(BREAK);}
 {char} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(CHAR);}
 {continue} { char* temp = malloc(8); toUpper(yytext, temp); tokensk(temp); return(CONTINUE);}
@@ -101,11 +101,11 @@ divideE "/""="
 {else} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(ELSE);}
 {enum} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(ENUM);}
 {extern} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp); return(EXTERN);}
-{float} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(FLOAT);}
+{float} { char* temp = malloc(5); tokensk(temp); yylval.sval = yytext;return(FLOAT);}
 {for} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(FOR);}
 {if} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(IF);}
 {in} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(IN);}
-{int} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(INT);}
+{int} { char* temp = malloc(3); tokensk(temp); yylval.sval = yytext;return(INT);}
 {let} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(LET);}
 {loop} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(LOOP);}
 {match} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(MATCH);}
@@ -115,13 +115,13 @@ divideE "/""="
 {return} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(RETURN);}
 {self} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(SELF);}
 {static} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp); return(STATIC);}
-{str} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(STR);}
+{str} { char* temp = malloc(3); tokensk(temp); yylval.sval = yytext;return(STR);}
 {struct} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp); return(STRUCT);}
 {use} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(USE);}
 {where} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(WHERE);}
 {while} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(WHILE);}
-{true} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(TRUE);}
-{false} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(FALSE);}
+{true} { char* temp = malloc(4); tokensk(temp); yylval.sval = yytext; return(TRUE);}
+{false} { char* temp = malloc(5); tokensk(temp); yylval.sval = yytext;return(FALSE);}
 {identifier} {
 	       tokenString("id", yytext);
 	       yylval.sval = strdup(yytext);
@@ -157,8 +157,8 @@ divideE "/""="
 {minusE} {token(yytext); return(MINUSE);}
 {multiplyE} {token(yytext); return(MULTIPLYE);}
 {divideE} {token(yytext); return(DIVIDEE);}
-{number} {tokenInteger("integer", atoi(yytext)); return(NUMBER);}
-{realnumber} {tokenString("real number", yytext); return(REALNUMBER);}
+{number} {tokenInteger("integer", atoi(yytext)); yylval.sval = yytext; return(NUMBER);}
+{realnumber} {tokenString("real number", yytext); yylval.sval = yytext; return(REALNUMBER);}
 
 "\"" {
       char *result = malloc(MAX_LINE_LENG);
@@ -187,6 +187,7 @@ divideE "/""="
       yytext = strdup(result);
       strcat(buf, "\"");
       //tokenString("string", "");
+      yylval.sval = yytext;
       return(STRING);
     }
 

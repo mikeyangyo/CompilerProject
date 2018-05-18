@@ -553,14 +553,25 @@ func_argument:	func_argument COMMA IDENTIFIER COLON type
 		IDENTIFIER COLON type
 		;
 
+block:		CBRACKETSL normal_declars stmts CBRACKETSR
+		{
+		  Trace("Reducing to block w/ normal declaration and statements\n");
+		}
+		|
+		CBRACKETSL stmts CBRACKETSR
+		{
+		  Trace("Reducing to block w/ statements\n");
+		}
+		;
+
 stmts:		stmts simple_stmt SEMICOLON
 		{
-		  Trace("Reducing to statements\n");
+		  Trace("Reducing to statements1\n");
 		}
 		|
 		simple_stmt SEMICOLON
 		{
-		  Trace("Reducing to statements\n");
+		  Trace("Reducing to statements2\n");
 		}
 		|
 		stmts block
@@ -604,17 +615,6 @@ stmts:		stmts simple_stmt SEMICOLON
 		}
 		;
 
-block:		CBRACKETSL normal_declars stmts CBRACKETSR
-		{
-		  Trace("Reducing to block w/ normal declaration and statements\n");
-		}
-		|
-		CBRACKETSL stmts CBRACKETSR
-		{
-		  Trace("Reducing to block w/ statements\n");
-		}
-		;
-
 simple_stmt:	IDENTIFIER ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
@@ -628,13 +628,29 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		PRINT expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  printf("%s", $2);
+		  if(nowType == 0){
+		    printf("%d", atoi($2));
+		  }
+		  else if(nowType == 1){
+		    printf("%f", atof($2));
+		  }
+		  else{
+		    printf("%s", $2);
+		  }
 		}
 		|
 		PRINTLN expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  printf("%s\n", $2);
+		  if(nowType == 0){
+		    printf("%d\n", atoi($2));
+		  }
+		  else if(nowType == 1){
+		    printf("%f\n", atof($2));
+		  }
+		  else{
+		    printf("%s\n", $2);
+		  }
 		}
 		|
 		READ IDENTIFIER
@@ -665,46 +681,10 @@ expr:		integer_expr
 		  Trace("Reducing to expression\n");
 		}
 		|
-		MINUS expr %prec UMINUS
-		{
-		  Trace("Reducing to expression\n");
-		  sprintf($$, "%f", (atof($2) * -1));
-		  nowType = 1;
-		}
-		|
-		expr LESST expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr LESSE expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr LARGERT expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr LARGERE expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr EQUAL expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr NEQUAL expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
 		constant_expr
 		{
-		  Trace("Reducing to expression\n");
+		  Trace("Reducing to constant expression\n");
+		  $$ = $1;
 		}
 		|
 		IDENTIFIER
@@ -725,29 +705,33 @@ expr:		integer_expr
 
 integer_expr:	integer_expr PLUS integer_expr_arg
 		{
-		  printf("two number plus\n");
+		  printf("Reducing to integer expression\n");
 		  sprintf($$, "%f", (atof($1) + atof($3)));
 		  nowType = 0;
 		}
 		|
 		integer_expr MINUS integer_expr_arg
 		{
-		  printf("two number minus\n");
 		  sprintf($$, "%f", (atof($1) - atof($3)));
 		  nowType = 0;
 		}
 		|
 		integer_expr MULTIPLY integer_expr_arg
 		{
-		  printf("two number multiply\n");
 		  sprintf($$, "%f", (atof($1) * atof($3)));
 		  nowType = 0;
 		}
 		|
 		integer_expr DIVIDE integer_expr_arg
 		{
-		  printf("two number divide\n");
 		  sprintf($$, "%f", (atof($1) / atof($3)));
+		  nowType = 1;
+		}
+		|
+		MINUS integer_expr_arg %prec UMINUS
+		{
+		  Trace("Reducing to expression\n");
+		  sprintf($$, "%f", (atof($2) * -1));
 		  nowType = 1;
 		}
 		|
@@ -756,7 +740,6 @@ integer_expr:	integer_expr PLUS integer_expr_arg
 
 integer_expr_arg:NUMBER
 		{
-		  printf("get number\n");
 		  $$ = $1;
 		}
 		|
@@ -777,6 +760,18 @@ boolean_expr:	boolean_expr AND boolean_expr
 		boolean_expr OR boolean_expr
 		|
 		NOT boolean_expr
+		|
+		integer_expr LESST integer_expr_arg
+		|
+		integer_expr LESSE integer_expr_arg
+		|
+		integer_expr LARGERT integer_expr_arg
+		|
+		integer_expr LARGERE integer_expr_arg
+		|
+		integer_expr EQUAL integer_expr_arg
+		|
+		integer_expr NEQUAL integer_expr_arg
 		|
 		TRUE
 		|
@@ -839,6 +834,7 @@ constant_expr:	NUMBER
 		{
 		  $$ = $1;
 		  nowType = 0;
+		printf("1\n");
 		}
 		|
 		REALNUMBER

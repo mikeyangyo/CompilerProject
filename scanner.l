@@ -136,7 +136,7 @@ divideE "/""="
 {sbracketsR} {token(yytext); return(SBRACKETSR);}
 {cbracketsL} {token(yytext); return(CBRACKETSL);}
 {cbracketsR} {token(yytext); return(CBRACKETSR);}
-{plus} {token(yytext); printf("+\n");return(PLUS);}
+{plus} {token(yytext); return(PLUS);}
 {minus} {token(yytext); return(MINUS);}
 {multiply} {token(yytext); return(MULTIPLY);}
 {divide} {token(yytext); return(DIVIDE);}
@@ -157,7 +157,7 @@ divideE "/""="
 {minusE} {token(yytext); return(MINUSE);}
 {multiplyE} {token(yytext); return(MULTIPLYE);}
 {divideE} {token(yytext); return(DIVIDEE);}
-{number} {tokenInteger("integer", atoi(yytext)); yylval.sval = yytext; printf("%s\n", yytext);return(NUMBER);}
+{number} {tokenInteger("integer", atoi(yytext)); yylval.sval = yytext; return(NUMBER);}
 {realnumber} {tokenString("real number", yytext); yylval.sval = yytext; return(REALNUMBER);}
 
 "\"" {

@@ -58,7 +58,7 @@ while "w""h""i""l""e"
 true "t""r""u""e"
 false "f""a""l""s""e"
 identifier [a-zA-Z_][a-zA-Z_0-9]*
-number [+-]?[0-9][0-9]*
+number [-]?[0-9][0-9]*
 realnumber [+-]?[0-9][0-9]*\.[0-9]+([eE][+-]?[0-9]+)?
 comma ","
 colon ":"

@@ -10,6 +10,9 @@
 
 %type <sval> constant_expr
 %type <sval> type
+%type <sval> expr
+%type <sval> integer_expr
+%type <sval> integer_expr_arg
 /* tokens */
 %token SEMICOLON
 %token <sval> IDENTIFIER
@@ -274,9 +277,10 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		  ID *newID = Search(Top(SymbolTables)->table, $3);
 
 		  if(newID == NULL){
-		    ID *newID = CreateID($3);
+		    newID = CreateID($3);
 		    existed = 0;
 		  }
+
 		  if(nowType == 0){
 		    if(strcmp("int", $5) != 0){
 		      printf("Error: %d is not %s type\n", atoi($7), $5);
@@ -624,11 +628,13 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		PRINT expr
 		{
 		  Trace("Reducing to simple statement\n");
+		  printf("%s", $2);
 		}
 		|
 		PRINTLN expr
 		{
 		  Trace("Reducing to simple statement\n");
+		  printf("%s\n", $2);
 		}
 		|
 		READ IDENTIFIER
@@ -650,6 +656,8 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 expr:		integer_expr
 		{
 		  Trace("Reducing to expression\n");
+		  $$ = $1;
+		  nowType = 1;
 		}
 		|
 		boolean_expr
@@ -660,6 +668,8 @@ expr:		integer_expr
 		MINUS expr %prec UMINUS
 		{
 		  Trace("Reducing to expression\n");
+		  sprintf($$, "%f", (atof($2) * -1));
+		  nowType = 1;
 		}
 		|
 		expr LESST expr
@@ -713,17 +723,53 @@ expr:		integer_expr
 		}
 		;
 
-integer_expr:	integer_expr PLUS integer_expr
+integer_expr:	integer_expr PLUS integer_expr_arg
+		{
+		  printf("two number plus\n");
+		  sprintf($$, "%f", (atof($1) + atof($3)));
+		  nowType = 0;
+		}
 		|
-		integer_expr MINUS integer_expr
+		integer_expr MINUS integer_expr_arg
+		{
+		  printf("two number minus\n");
+		  sprintf($$, "%f", (atof($1) - atof($3)));
+		  nowType = 0;
+		}
 		|
-		integer_expr MULTIPLY integer_expr
+		integer_expr MULTIPLY integer_expr_arg
+		{
+		  printf("two number multiply\n");
+		  sprintf($$, "%f", (atof($1) * atof($3)));
+		  nowType = 0;
+		}
 		|
-		integer_expr DIVIDE integer_expr
+		integer_expr DIVIDE integer_expr_arg
+		{
+		  printf("two number divide\n");
+		  sprintf($$, "%f", (atof($1) / atof($3)));
+		  nowType = 1;
+		}
 		|
-		NUMBER
+		integer_expr_arg
+		;
+
+integer_expr_arg:NUMBER
+		{
+		  printf("get number\n");
+		  $$ = $1;
+		}
 		|
 		IDENTIFIER
+		{
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  if(newID->type == "int"){
+		    sprintf($$, "%d", *(int*)newID->value);
+		  }
+		  else{
+		    printf("Error: the type is not int\n");
+		  }
+		}
 		;
 
 boolean_expr:	boolean_expr AND boolean_expr

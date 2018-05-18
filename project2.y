@@ -741,6 +741,7 @@ integer_expr:	integer_expr PLUS integer_expr_arg
 integer_expr_arg:NUMBER
 		{
 		  $$ = $1;
+		printf("%s\n", $1);
 		}
 		|
 		IDENTIFIER
@@ -834,7 +835,6 @@ constant_expr:	NUMBER
 		{
 		  $$ = $1;
 		  nowType = 0;
-		printf("1\n");
 		}
 		|
 		REALNUMBER

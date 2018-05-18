@@ -480,21 +480,67 @@ array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA NUMBER SBRACKETSR
 func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT type block
 		{
 		  Trace("Reducing to function declaration w/ arguments and return type\n");
+		  ID * newID = Search(Top(SymbolTables)->table, $2);
+
+		  if(newID == NULL){
+		    newID = CreateID($2);
+		    newID->type = "Function_";
+		    strcat(newID->type, $8);
+		    Insert(Top(SymbolTables)->table, newID);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		  else{
+		    printf("%s already existed!\n", $2);
+		  }
 		}
 		|
 		FN IDENTIFIER PARENTHESESL PARENTHESESR MINUS LARGERT type block
 		{
 		  Trace("Reducing to function declaration w/ return type\n");
+		  ID * newID = Search(Top(SymbolTables)->table, $2);
+
+		  if(newID == NULL){
+		    newID = CreateID($2);
+		    newID->type = "Function_";
+		    strcat(newID->type, $7);
+		    Insert(Top(SymbolTables)->table, newID);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		  else{
+		    printf("%s already existed!\n", $2);
+		  }
 		}
 		|
 		FN IDENTIFIER PARENTHESESL PARENTHESESR block
 		{
 		  Trace("Reducing to function declaration w/ no arguments and no return type\n");
+		  ID * newID = Search(Top(SymbolTables)->table, $2);
+
+		  if(newID == NULL){
+		    newID = CreateID($2);
+		    newID->type = "Function";
+		    Insert(Top(SymbolTables)->table, newID);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		  else{
+		    printf("%s already existed!\n", $2);
+		  }
 		}
 		|
 		FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR block
 		{
 		  Trace("Reducing to function declaration w/ arguments\n");
+		  ID * newID = Search(Top(SymbolTables)->table, $2);
+
+		  if(newID == NULL){
+		    newID = CreateID($2);
+		    newID->type = "Function";
+		    Insert(Top(SymbolTables)->table, newID);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		  else{
+		    printf("%s already existed!\n", $2);
+		  }
 		}
 		;
 

@@ -690,6 +690,29 @@ expr:		integer_expr
 		IDENTIFIER
 		{
 		  Trace("Reducing to expression\n");
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  if(newID == NULL){
+		    printf("Error: Undefined variable\n");
+		  }
+		  else{
+		    if(strcmp(newID->type, "int") == 0 ||strcmp(newID->type, "nint") == 0){
+		      sprintf($$, "%d", *(int*)newID->value);
+		    }
+		    else if(strcmp(newID->type, "float") == 0 ||strcmp(newID->type, "nfloat") == 0){
+		      sprintf($$, "%f", *(float*)newID->value);
+		    }
+		    else if(strcmp(newID->type, "str") == 0 ||strcmp(newID->type, "nstr") == 0){
+		      $$ = (char*)newID->value;
+		    }
+		    else if(strcmp(newID->type, "bool") == 0 ||strcmp(newID->type, "nbool") == 0){
+		      $$ = (char*)newID->value;
+		    }
+		    else{
+		      printf("Error: Can't print type %s variable\n", newID->type);
+		    }
+
+		    printf("print value = %s\n", $$);
+		  }
 		}
 		|
 		func_invoke

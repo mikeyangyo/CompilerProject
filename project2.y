@@ -13,6 +13,7 @@
 %type <sval> expr
 %type <sval> integer_expr
 %type <sval> integer_expr_arg
+%type <sval> boolean_expr
 /* tokens */
 %token SEMICOLON
 %token <sval> IDENTIFIER
@@ -618,6 +619,55 @@ stmts:		stmts simple_stmt SEMICOLON
 simple_stmt:	IDENTIFIER ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  if(newID == NULL){
+		    printf("Error: Undefined variable\n");
+		  }
+		  else{
+printf("now type = %d\n", nowType);
+		    switch(nowType){
+		      case 0:
+printf("%s's type = %s", newID->name, newID->type);
+		        if(strcmp("int", newID->type) == 0 || strcmp("nint", newID->type) == 0){
+			  int* temp = (int*)malloc(sizeof(int));
+			  *temp = atoi($3);
+			  newID->value = (void*)temp;
+			  printf("%s's value = %d", newID->name, *(int*)newID->value);
+			}
+			else{
+			  printf("Error: Unsuitable type\n");
+			}
+		        break;
+		      case 1:
+		        if(strcmp("float", newID->type) == 0 || strcmp("nfloat", newID->type) == 0){
+			  float* temp = (float*)malloc(sizeof(float));
+			  *temp = atof($3);
+			  newID->value = (void*)temp;
+			}
+			else{
+			  printf("Error: Unsuitable type\n");
+			}
+		        break;
+		      case 2:
+		        if(strcmp("str", newID->type) == 0 || strcmp("nstr", newID->type) == 0){
+			  newID->value = (void*)$3;
+			}
+			else{
+			  printf("Error: Unsuitable type\n");
+			}
+		        break;
+		      case 3:
+		        if(strcmp("bool", newID->type) == 0 || strcmp("nbool", newID->type) == 0){
+			  newID->value = (void*)$3;
+			}
+			else{
+			  printf("Error: Unsuitable type\n");
+			}
+		        break;
+		      default:
+		        break;
+		    }
+		  }
 		}
 		|
 		IDENTIFIER SBRACKETSL SBRACKETSR ASSIGN expr
@@ -673,7 +723,6 @@ expr:		integer_expr
 		{
 		  Trace("Reducing to expression\n");
 		  $$ = $1;
-		  nowType = 1;
 		}
 		|
 		boolean_expr
@@ -764,7 +813,7 @@ integer_expr:	integer_expr PLUS integer_expr_arg
 integer_expr_arg:NUMBER
 		{
 		  $$ = $1;
-		printf("%s\n", $1);
+		  nowType = 0;
 		}
 		|
 		IDENTIFIER
@@ -772,6 +821,7 @@ integer_expr_arg:NUMBER
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
 		  if(newID->type == "int"){
 		    sprintf($$, "%d", *(int*)newID->value);
+		    nowType = 0;
 		  }
 		  else{
 		    printf("Error: the type is not int\n");
@@ -798,11 +848,22 @@ boolean_expr:	boolean_expr AND boolean_expr
 		integer_expr NEQUAL integer_expr_arg
 		|
 		TRUE
+		{
+		  $$ = "true";
+		  nowType = 3;
+		}
 		|
 		FALSE
+		{
+		  $$ = "false";
+		  nowType = 3;
+		}
 		;
 
 array_ref:	IDENTIFIER SBRACKETSL integer_expr SBRACKETSR
+		{
+		  Trace("Reducing to array reference\n");
+		}
 		;
 
 func_invoke:	IDENTIFIER PARENTHESESL func_invoke_arg PARENTHESESR

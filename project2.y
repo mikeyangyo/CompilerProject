@@ -10,6 +10,10 @@
 
 %type <sval> constant_expr
 %type <sval> type
+%type <sval> expr
+%type <sval> integer_expr
+%type <sval> integer_expr_arg
+%type <sval> boolean_expr
 /* tokens */
 %token SEMICOLON
 %token <sval> IDENTIFIER
@@ -274,9 +278,10 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		  ID *newID = Search(Top(SymbolTables)->table, $3);
 
 		  if(newID == NULL){
-		    ID *newID = CreateID($3);
+		    newID = CreateID($3);
 		    existed = 0;
 		  }
+
 		  if(nowType == 0){
 		    if(strcmp("int", $5) != 0){
 		      printf("Error: %d is not %s type\n", atoi($7), $5);
@@ -480,21 +485,67 @@ array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA NUMBER SBRACKETSR
 func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT type block
 		{
 		  Trace("Reducing to function declaration w/ arguments and return type\n");
+		  ID * newID = Search(Top(SymbolTables)->table, $2);
+
+		  if(newID == NULL){
+		    newID = CreateID($2);
+		    newID->type = "Function_";
+		    strcat(newID->type, $8);
+		    Insert(Top(SymbolTables)->table, newID);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		  else{
+		    printf("%s already existed!\n", $2);
+		  }
 		}
 		|
 		FN IDENTIFIER PARENTHESESL PARENTHESESR MINUS LARGERT type block
 		{
 		  Trace("Reducing to function declaration w/ return type\n");
+		  ID * newID = Search(Top(SymbolTables)->table, $2);
+
+		  if(newID == NULL){
+		    newID = CreateID($2);
+		    newID->type = "Function_";
+		    strcat(newID->type, $7);
+		    Insert(Top(SymbolTables)->table, newID);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		  else{
+		    printf("%s already existed!\n", $2);
+		  }
 		}
 		|
 		FN IDENTIFIER PARENTHESESL PARENTHESESR block
 		{
 		  Trace("Reducing to function declaration w/ no arguments and no return type\n");
+		  ID * newID = Search(Top(SymbolTables)->table, $2);
+
+		  if(newID == NULL){
+		    newID = CreateID($2);
+		    newID->type = "Function";
+		    Insert(Top(SymbolTables)->table, newID);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		  else{
+		    printf("%s already existed!\n", $2);
+		  }
 		}
 		|
 		FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR block
 		{
 		  Trace("Reducing to function declaration w/ arguments\n");
+		  ID * newID = Search(Top(SymbolTables)->table, $2);
+
+		  if(newID == NULL){
+		    newID = CreateID($2);
+		    newID->type = "Function";
+		    Insert(Top(SymbolTables)->table, newID);
+		    Dump(Top(SymbolTables)->table);
+		  }
+		  else{
+		    printf("%s already existed!\n", $2);
+		  }
 		}
 		;
 
@@ -503,14 +554,25 @@ func_argument:	func_argument COMMA IDENTIFIER COLON type
 		IDENTIFIER COLON type
 		;
 
+block:		CBRACKETSL normal_declars stmts CBRACKETSR
+		{
+		  Trace("Reducing to block w/ normal declaration and statements\n");
+		}
+		|
+		CBRACKETSL stmts CBRACKETSR
+		{
+		  Trace("Reducing to block w/ statements\n");
+		}
+		;
+
 stmts:		stmts simple_stmt SEMICOLON
 		{
-		  Trace("Reducing to statements\n");
+		  Trace("Reducing to statements1\n");
 		}
 		|
 		simple_stmt SEMICOLON
 		{
-		  Trace("Reducing to statements\n");
+		  Trace("Reducing to statements2\n");
 		}
 		|
 		stmts block
@@ -554,23 +616,59 @@ stmts:		stmts simple_stmt SEMICOLON
 		}
 		;
 
-block:		CBRACKETSL normal_declars stmts CBRACKETSR
-		{
-		  Trace("Reducing to block w/ normal declaration and statements\n");
-		}
-		|
-		CBRACKETSL stmts CBRACKETSR
-		{
-		  Trace("Reducing to block w/ statements\n");
-		}
-		;
-
 simple_stmt:	IDENTIFIER ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  if(newID == NULL){
+		    printf("Error: Undefined variable\n");
+		  }
+		  else{
+		    switch(nowType){
+		      case 0:
+		        if(strcmp("int", newID->type) == 0 || strcmp("nint", newID->type) == 0){
+			  int* temp = (int*)malloc(sizeof(int));
+			  *temp = atoi($3);
+			  newID->value = (void*)temp;
+			  printf("%s's value = %d", newID->name, *(int*)newID->value);
+			}
+			else{
+			  printf("Error: Unsuitable type\n");
+			}
+		        break;
+		      case 1:
+		        if(strcmp("float", newID->type) == 0 || strcmp("nfloat", newID->type) == 0){
+			  float* temp = (float*)malloc(sizeof(float));
+			  *temp = atof($3);
+			  newID->value = (void*)temp;
+			}
+			else{
+			  printf("Error: Unsuitable type\n");
+			}
+		        break;
+		      case 2:
+		        if(strcmp("str", newID->type) == 0 || strcmp("nstr", newID->type) == 0){
+			  newID->value = (void*)$3;
+			}
+			else{
+			  printf("Error: Unsuitable type\n");
+			}
+		        break;
+		      case 3:
+		        if(strcmp("bool", newID->type) == 0 || strcmp("nbool", newID->type) == 0){
+			  newID->value = (void*)$3;
+			}
+			else{
+			  printf("Error: Unsuitable type\n");
+			}
+		        break;
+		      default:
+		        break;
+		    }
+		  }
 		}
 		|
-		IDENTIFIER SBRACKETSL SBRACKETSR ASSIGN expr
+		array_ref ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
 		}
@@ -578,11 +676,29 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		PRINT expr
 		{
 		  Trace("Reducing to simple statement\n");
+		  if(nowType == 0){
+		    printf("%d", atoi($2));
+		  }
+		  else if(nowType == 1){
+		    printf("%f", atof($2));
+		  }
+		  else{
+		    printf("%s", $2);
+		  }
 		}
 		|
 		PRINTLN expr
 		{
 		  Trace("Reducing to simple statement\n");
+		  if(nowType == 0){
+		    printf("%d\n", atoi($2));
+		  }
+		  else if(nowType == 1){
+		    printf("%f\n", atof($2));
+		  }
+		  else{
+		    printf("%s\n", $2);
+		  }
 		}
 		|
 		READ IDENTIFIER
@@ -604,56 +720,47 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 expr:		integer_expr
 		{
 		  Trace("Reducing to expression\n");
+		  $$ = $1;
 		}
 		|
 		boolean_expr
 		{
 		  Trace("Reducing to expression\n");
-		}
-		|
-		MINUS expr %prec UMINUS
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr LESST expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr LESSE expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr LARGERT expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr LARGERE expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr EQUAL expr
-		{
-		  Trace("Reducing to expression\n");
-		}
-		|
-		expr NEQUAL expr
-		{
-		  Trace("Reducing to expression\n");
+		  $$ = $1;
 		}
 		|
 		constant_expr
 		{
-		  Trace("Reducing to expression\n");
+		  Trace("Reducing to constant expression\n");
+		  $$ = $1;
 		}
 		|
 		IDENTIFIER
 		{
 		  Trace("Reducing to expression\n");
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  if(newID == NULL){
+		    printf("Error: Undefined variable\n");
+		  }
+		  else{
+		    if(strcmp(newID->type, "int") == 0 ||strcmp(newID->type, "nint") == 0){
+		      sprintf($$, "%d", *(int*)newID->value);
+		    }
+		    else if(strcmp(newID->type, "float") == 0 ||strcmp(newID->type, "nfloat") == 0){
+		      sprintf($$, "%f", *(float*)newID->value);
+		    }
+		    else if(strcmp(newID->type, "str") == 0 ||strcmp(newID->type, "nstr") == 0){
+		      $$ = (char*)newID->value;
+		    }
+		    else if(strcmp(newID->type, "bool") == 0 ||strcmp(newID->type, "nbool") == 0){
+		      $$ = (char*)newID->value;
+		    }
+		    else{
+		      printf("Error: Can't print type %s variable\n", newID->type);
+		    }
+
+		    printf("print value = %s\n", $$);
+		  }
 		}
 		|
 		func_invoke
@@ -667,17 +774,58 @@ expr:		integer_expr
 		}
 		;
 
-integer_expr:	integer_expr PLUS integer_expr
+integer_expr:	integer_expr PLUS integer_expr_arg
+		{
+		  printf("Reducing to integer expression\n");
+		  sprintf($$, "%f", (atof($1) + atof($3)));
+		  nowType = 0;
+		}
 		|
-		integer_expr MINUS integer_expr
+		integer_expr MINUS integer_expr_arg
+		{
+		  sprintf($$, "%f", (atof($1) - atof($3)));
+		  nowType = 0;
+		}
 		|
-		integer_expr MULTIPLY integer_expr
+		integer_expr MULTIPLY integer_expr_arg
+		{
+		  sprintf($$, "%f", (atof($1) * atof($3)));
+		  nowType = 0;
+		}
 		|
-		integer_expr DIVIDE integer_expr
+		integer_expr DIVIDE integer_expr_arg
+		{
+		  sprintf($$, "%f", (atof($1) / atof($3)));
+		  nowType = 1;
+		}
 		|
-		NUMBER
+		MINUS integer_expr_arg %prec UMINUS
+		{
+		  Trace("Reducing to expression\n");
+		  sprintf($$, "%f", (atof($2) * -1));
+		  nowType = 1;
+		}
+		|
+		integer_expr_arg
+		;
+
+integer_expr_arg:NUMBER
+		{
+		  $$ = $1;
+		  nowType = 0;
+		}
 		|
 		IDENTIFIER
+		{
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  if(newID->type == "int"){
+		    sprintf($$, "%d", *(int*)newID->value);
+		    nowType = 0;
+		  }
+		  else{
+		    printf("Error: the type is not int\n");
+		  }
+		}
 		;
 
 boolean_expr:	boolean_expr AND boolean_expr
@@ -686,12 +834,35 @@ boolean_expr:	boolean_expr AND boolean_expr
 		|
 		NOT boolean_expr
 		|
+		integer_expr LESST integer_expr_arg
+		|
+		integer_expr LESSE integer_expr_arg
+		|
+		integer_expr LARGERT integer_expr_arg
+		|
+		integer_expr LARGERE integer_expr_arg
+		|
+		integer_expr EQUAL integer_expr_arg
+		|
+		integer_expr NEQUAL integer_expr_arg
+		|
 		TRUE
+		{
+		  $$ = "true";
+		  nowType = 3;
+		}
 		|
 		FALSE
+		{
+		  $$ = "false";
+		  nowType = 3;
+		}
 		;
 
 array_ref:	IDENTIFIER SBRACKETSL integer_expr SBRACKETSR
+		{
+		  Trace("Reducing to array reference\n");
+		}
 		;
 
 func_invoke:	IDENTIFIER PARENTHESESL func_invoke_arg PARENTHESESR

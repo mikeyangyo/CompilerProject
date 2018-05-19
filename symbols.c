@@ -137,6 +137,21 @@ void printval(ID *nowID){
   else if(strcmp(nowID->type, "bool_array") == 0){
     printf("%s\t%s\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
   }
+  else if(strcmp(nowID->type, "Function") == 0){
+    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+  }
+  else if(strcmp(nowID->type, "Function_int") == 0){
+    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+  }
+  else if(strcmp(nowID->type, "Function_float") == 0){
+    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+  }
+  else if(strcmp(nowID->type, "Function_str") == 0){
+    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+  }
+  else if(strcmp(nowID->type, "Function_float") == 0){
+    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+  }
   else{
     printf("Error: ID type is wrong, type = %s\n", nowID->type);
   }

@@ -26,6 +26,8 @@
     return 0;
   }
 %}
+number [-]?[0-9][0-9]*
+realnumber [-]?[0-9][0-9]*\.[0-9]+([eE][+-]?[0-9]+)?
 fn "f""n"
 println "p""r""i""n""t""l""n"
 bool "b""o""o""l"
@@ -58,8 +60,6 @@ while "w""h""i""l""e"
 true "t""r""u""e"
 false "f""a""l""s""e"
 identifier [a-zA-Z_][a-zA-Z_0-9]*
-number [+-]?[0-9][0-9]*
-realnumber [+-]?[0-9][0-9]*\.[0-9]+([eE][+-]?[0-9]+)?
 comma ","
 colon ":"
 semicolon ";"
@@ -92,7 +92,7 @@ multiplyE "*""="
 divideE "/""="
 %%
 {fn} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(FN);}
-{println} { char* temp = malloc(7); toUpper(yytext, temp); tokensk(temp); return(PRINTLN);}
+{println} { char* temp = malloc(7); toUpper(yytext, temp); tokensk(temp); printf("%s\n", yytext);return(PRINTLN);}
 {bool} { char* temp = malloc(4); tokensk(temp); yylval.sval = yytext; return(BOOL);}
 {break} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(BREAK);}
 {char} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(CHAR);}
@@ -125,18 +125,19 @@ divideE "/""="
 {identifier} {
 	       tokenString("id", yytext);
 	       yylval.sval = strdup(yytext);
+		printf("%s\n", yytext);
 	       return(IDENTIFIER);
 	     }
 {comma} {token(yytext); return(COMMA);}
 {colon} {token(yytext); return(COLON);}
-{semicolon} {token(yytext); return(SEMICOLON);}
+{semicolon} {token(yytext); printf("%s\n", yytext);return(SEMICOLON);}
 {parenthesesL} {token(yytext); return(PARENTHESESL);}
 {parenthesesR} {token(yytext); return(PARENTHESESR);}
 {sbracketsL} {token(yytext); return(SBRACKETSL);}
 {sbracketsR} {token(yytext); return(SBRACKETSR);}
 {cbracketsL} {token(yytext); return(CBRACKETSL);}
 {cbracketsR} {token(yytext); return(CBRACKETSR);}
-{plus} {token(yytext); return(PLUS);}
+{plus} {token(yytext); printf("%s\n", yytext);return(PLUS);}
 {minus} {token(yytext); return(MINUS);}
 {multiply} {token(yytext); return(MULTIPLY);}
 {divide} {token(yytext); return(DIVIDE);}
@@ -157,7 +158,7 @@ divideE "/""="
 {minusE} {token(yytext); return(MINUSE);}
 {multiplyE} {token(yytext); return(MULTIPLYE);}
 {divideE} {token(yytext); return(DIVIDEE);}
-{number} {tokenInteger("integer", atoi(yytext)); yylval.sval = yytext; return(NUMBER);}
+{number} {tokenInteger("integer", atoi(yytext)); yylval.sval = yytext; printf("number = %s\n", yytext);return(NUMBER);}
 {realnumber} {tokenString("real number", yytext); yylval.sval = yytext; return(REALNUMBER);}
 
 "\"" {

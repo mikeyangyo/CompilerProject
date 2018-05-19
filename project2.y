@@ -624,10 +624,8 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		    printf("Error: Undefined variable\n");
 		  }
 		  else{
-printf("now type = %d\n", nowType);
 		    switch(nowType){
 		      case 0:
-printf("%s's type = %s", newID->name, newID->type);
 		        if(strcmp("int", newID->type) == 0 || strcmp("nint", newID->type) == 0){
 			  int* temp = (int*)malloc(sizeof(int));
 			  *temp = atoi($3);
@@ -670,7 +668,7 @@ printf("%s's type = %s", newID->name, newID->type);
 		  }
 		}
 		|
-		IDENTIFIER SBRACKETSL SBRACKETSR ASSIGN expr
+		array_ref ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
 		}
@@ -728,6 +726,7 @@ expr:		integer_expr
 		boolean_expr
 		{
 		  Trace("Reducing to expression\n");
+		  $$ = $1;
 		}
 		|
 		constant_expr

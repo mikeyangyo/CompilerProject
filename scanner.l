@@ -26,8 +26,8 @@
     return 0;
   }
 %}
-number [-]?[0-9][0-9]*
-realnumber [-]?[0-9][0-9]*\.[0-9]+([eE][+-]?[0-9]+)?
+number [+-]?[0-9][0-9]*
+realnumber [+-]?[0-9][0-9]*\.[0-9]+([eE][+-]?[0-9]+)?
 fn "f""n"
 println "p""r""i""n""t""l""n"
 bool "b""o""o""l"
@@ -77,7 +77,7 @@ dplus "+""+"
 dminus "-""-"
 mod "%"
 lessT "<"
-lessE "<""="
+lessE '<''='
 largerT ">"
 largerE ">""="
 equal "=""="
@@ -92,7 +92,7 @@ multiplyE "*""="
 divideE "/""="
 %%
 {fn} { char* temp = malloc(2); toUpper(yytext, temp); tokensk(temp); return(FN);}
-{println} { char* temp = malloc(7); toUpper(yytext, temp); tokensk(temp); printf("%s\n", yytext);return(PRINTLN);}
+{println} { char* temp = malloc(7); toUpper(yytext, temp); tokensk(temp);return(PRINTLN);}
 {bool} { char* temp = malloc(4); tokensk(temp); yylval.sval = yytext; return(BOOL);}
 {break} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(BREAK);}
 {char} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(CHAR);}
@@ -112,7 +112,7 @@ divideE "/""="
 {mut} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(MUT);}
 {print} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(PRINT);}
 {pub} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(PUB);}
-{return} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(RETURN);}
+{return} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); printf("%s\n", yytext);return(RETURN);}
 {self} { char* temp = malloc(4); toUpper(yytext, temp); tokensk(temp); return(SELF);}
 {static} { char* temp = malloc(6); toUpper(yytext, temp); tokensk(temp); return(STATIC);}
 {str} { char* temp = malloc(3); tokensk(temp); yylval.sval = yytext;return(STR);}
@@ -125,12 +125,12 @@ divideE "/""="
 {identifier} {
 	       tokenString("id", yytext);
 	       yylval.sval = strdup(yytext);
-		printf("%s\n", yytext);
+		printf("id in lex = %s\n", yytext);
 	       return(IDENTIFIER);
 	     }
 {comma} {token(yytext); return(COMMA);}
 {colon} {token(yytext); return(COLON);}
-{semicolon} {token(yytext); printf("%s\n", yytext);return(SEMICOLON);}
+{semicolon} {token(yytext);return(SEMICOLON);}
 {parenthesesL} {token(yytext); return(PARENTHESESL);}
 {parenthesesR} {token(yytext); return(PARENTHESESR);}
 {sbracketsL} {token(yytext); return(SBRACKETSL);}
@@ -144,10 +144,10 @@ divideE "/""="
 {dplus} {token(yytext); return(DPLUS);}
 {dminus} {token(yytext); return(DMINUS);}
 {mod} {token(yytext); return(MOD);}
-{lessT} {token(yytext); return(LESST);}
-{lessE} {token(yytext); return(LESSE);}
-{largerT} {token(yytext); return(LARGERT);}
+{lessE} {token(yytext); printf("<= in lex\n");return(LESSE);}
+{lessT} {token(yytext); printf("< in lex\n");return(LESST);}
 {largerE} {token(yytext); return(LARGERE);}
+{largerT} {token(yytext); return(LARGERT);}
 {equal} {token(yytext); return(EQUAL);}
 {nequal} {token(yytext); return(NEQUAL);}
 {and} {token(yytext); return(AND);}
@@ -159,7 +159,7 @@ divideE "/""="
 {multiplyE} {token(yytext); return(MULTIPLYE);}
 {divideE} {token(yytext); return(DIVIDEE);}
 {number} {tokenInteger("integer", atoi(yytext)); yylval.sval = yytext; printf("number = %s\n", yytext);return(NUMBER);}
-{realnumber} {tokenString("real number", yytext); yylval.sval = yytext; return(REALNUMBER);}
+{realnumber} {tokenString("real number", yytext); yylval.sval = yytext; printf("real number = %s\n", yytext);return(REALNUMBER);}
 
 "\"" {
       char *result = malloc(MAX_LINE_LENG);
@@ -187,7 +187,7 @@ divideE "/""="
       }
       yytext = strdup(result);
       strcat(buf, "\"");
-      //tokenString("string", "");
+      tokenString("string", "");
       yylval.sval = yytext;
       return(STRING);
     }

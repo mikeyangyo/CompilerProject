@@ -14,6 +14,7 @@
 %type <sval> integer_expr
 %type <sval> integer_expr_arg
 %type <sval> boolean_expr
+%type <sval> boolean_expr_arg
 /* tokens */
 %token SEMICOLON
 %token <sval> IDENTIFIER
@@ -567,12 +568,12 @@ block:		CBRACKETSL normal_declars stmts CBRACKETSR
 
 stmts:		stmts simple_stmt SEMICOLON
 		{
-		  Trace("Reducing to statements1\n");
+		  Trace("Reducing to statements\n");
 		}
 		|
 		simple_stmt SEMICOLON
 		{
-		  Trace("Reducing to statements2\n");
+		  Trace("Reducing to statements\n");
 		}
 		|
 		stmts block
@@ -777,36 +778,72 @@ expr:		integer_expr
 integer_expr:	integer_expr PLUS integer_expr_arg
 		{
 		  printf("Reducing to integer expression\n");
-		  sprintf($$, "%f", (atof($1) + atof($3)));
-		  nowType = 0;
+		  if(nowType == 0){
+		    sprintf($$, "%d", (atoi($1) + atoi($3)));
+		    nowType = 0;
+		  }
+		  else if(nowType == 1){
+		    sprintf($$, "%f", (atof($1) + atof($3)));
+		    nowType = 1;
+		  }
 		}
 		|
 		integer_expr MINUS integer_expr_arg
 		{
-		  sprintf($$, "%f", (atof($1) - atof($3)));
-		  nowType = 0;
+		  printf("Reducing to integer expression\n");
+		  if(nowType == 0){
+		    sprintf($$, "%d", (atoi($1) - atoi($3)));
+		    nowType = 0;
+		  }
+		  else if(nowType == 1){
+		    sprintf($$, "%f", (atof($1) - atof($3)));
+		    nowType = 1;
+		  }
 		}
 		|
 		integer_expr MULTIPLY integer_expr_arg
 		{
-		  sprintf($$, "%f", (atof($1) * atof($3)));
-		  nowType = 0;
+		  printf("Reducing to integer expression\n");
+		  if(nowType == 0){
+		    sprintf($$, "%d", (atoi($1) * atoi($3)));
+		    nowType = 0;
+		  }
+		  else if(nowType == 1){
+		    sprintf($$, "%f", (atof($1) * atof($3)));
+		    nowType = 1;
+		  }
 		}
 		|
 		integer_expr DIVIDE integer_expr_arg
 		{
-		  sprintf($$, "%f", (atof($1) / atof($3)));
-		  nowType = 1;
+		  if(nowType == 0){
+		    sprintf($$, "%d", atoi($1) / atoi($3));
+		    nowType = 1;
+		  }
+		  else if(nowType == 1){
+		    sprintf($$, "%f", (atof($1) / atof($3)));
+		    nowType = 1;
+		  }
 		}
 		|
 		MINUS integer_expr_arg %prec UMINUS
 		{
-		  Trace("Reducing to expression\n");
-		  sprintf($$, "%f", (atof($2) * -1));
-		  nowType = 1;
+		  printf("Reducing to integer expression\n");
+		  if(nowType == 0){
+		    sprintf($$, "%d", (int)(atoi($2) * -1));
+		    nowType = 0;
+		  }
+		  else if(nowType == 1){
+		    sprintf($$, "%f", (float)((atof($2) * -1)));
+		    nowType = 1;
+		  }
 		}
 		|
 		integer_expr_arg
+		{
+		  printf("integer_expr_arg = %s\n", $1);
+		  $$ = $1;
+		}
 		;
 
 integer_expr_arg:NUMBER
@@ -815,47 +852,98 @@ integer_expr_arg:NUMBER
 		  nowType = 0;
 		}
 		|
+		REALNUMBER
+		{
+		  $$ = $1;
+		  printf("real number = %s in yacc\n", $$);
+		  nowType = 1;
+		}
 		IDENTIFIER
 		{
+		  printf("%s\n", $1);
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
 		  if(newID->type == "int"){
 		    sprintf($$, "%d", *(int*)newID->value);
 		    nowType = 0;
 		  }
+		  else if(newID->type == "float"){
+		    sprintf($$, "%f", *(float*)newID->value);
+		    nowType = 0;
+		  }
 		  else{
-		    printf("Error: the type is not int\n");
+		    printf("Error: the type is not a real number\n");
 		  }
 		}
 		;
 
-boolean_expr:	boolean_expr AND boolean_expr
-		|
-		boolean_expr OR boolean_expr
-		|
-		NOT boolean_expr
-		|
-		integer_expr LESST integer_expr_arg
-		|
-		integer_expr LESSE integer_expr_arg
-		|
-		integer_expr LARGERT integer_expr_arg
-		|
-		integer_expr LARGERE integer_expr_arg
-		|
-		integer_expr EQUAL integer_expr_arg
-		|
-		integer_expr NEQUAL integer_expr_arg
-		|
-		TRUE
+boolean_expr:	boolean_expr AND boolean_expr_arg
 		{
+		  printf("Reducing to boolean expression\n");
+		}
+		|
+		boolean_expr OR boolean_expr_arg
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		|
+		NOT boolean_expr_arg
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		|
+		boolean_expr LESST boolean_expr_arg
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		|
+		boolean_expr LESSE boolean_expr_arg
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		|
+		boolean_expr LARGERT boolean_expr_arg
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		|
+		boolean_expr LARGERE boolean_expr_arg
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		|
+		boolean_expr EQUAL boolean_expr_arg
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		|
+		boolean_expr NEQUAL boolean_expr_arg
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		|
+		boolean_expr_arg
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		;
+
+boolean_expr_arg:TRUE
+		{
+		  printf("Reducing to boolean expression argument\n");
 		  $$ = "true";
 		  nowType = 3;
 		}
 		|
 		FALSE
 		{
+		  printf("Reducing to boolean expression argument\n");
 		  $$ = "false";
 		  nowType = 3;
+		}
+		IDENTIFIER
+		{
+		  printf("Reducing to boolean expression argument\n");
+		  $$ = $1;
 		}
 		;
 

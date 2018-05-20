@@ -890,37 +890,6 @@ boolean_expr:	boolean_expr AND boolean_expr_arg
 		{
 		  printf("Reducing to boolean expression\n");
 		}
-		|
-		boolean_expr LESST boolean_expr_arg
-		{
-		  printf("Reducing to boolean expression\n");
-		}
-		|
-		boolean_expr LESSE boolean_expr_arg
-		{
-		  printf("Reducing to boolean expression\n");
-		}
-		|
-		boolean_expr LARGERT boolean_expr_arg
-		{
-		  printf("Reducing to boolean expression\n");
-		}
-		|
-		boolean_expr LARGERE boolean_expr_arg
-		{
-		  printf("Reducing to boolean expression\n");
-		}
-		|
-		boolean_expr EQUAL boolean_expr_arg
-		{
-		  printf("Reducing to boolean expression\n");
-		}
-		|
-		boolean_expr NEQUAL boolean_expr_arg
-		{
-		  printf("Reducing to boolean expression\n");
-		}
-		|
 		boolean_expr_arg
 		{
 		  printf("Reducing to boolean expression\n");

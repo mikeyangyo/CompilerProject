@@ -82,7 +82,7 @@ largerT ">"
 largerE ">""="
 equal "=""="
 nequal "!""="
-and "&""&"
+and "&&"
 or "|""|"
 not "!"
 assign "="
@@ -120,8 +120,8 @@ divideE "/""="
 {use} { char* temp = malloc(3); toUpper(yytext, temp); tokensk(temp); return(USE);}
 {where} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(WHERE);}
 {while} { char* temp = malloc(5); toUpper(yytext, temp); tokensk(temp); return(WHILE);}
-{true} { char* temp = malloc(4); tokensk(temp); yylval.sval = yytext; return(TRUE);}
-{false} { char* temp = malloc(5); tokensk(temp); yylval.sval = yytext;return(FALSE);}
+{true} { char* temp = malloc(4); tokensk(temp); yylval.sval = yytext; printf("get true in lex\n");return(TRUE);}
+{false} { char* temp = malloc(5); tokensk(temp); yylval.sval = yytext;printf("get false in lex\n");return(FALSE);}
 {identifier} {
 	       tokenString("id", yytext);
 	       yylval.sval = strdup(yytext);

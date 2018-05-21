@@ -15,6 +15,7 @@
 %type <sval> integer_expr_arg
 %type <sval> boolean_expr
 %type <sval> boolean_expr_arg
+%type <sval> func_invoke
 /* tokens */
 %token SEMICOLON
 %token <sval> IDENTIFIER
@@ -490,7 +491,7 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 
 		  if(newID == NULL){
 		    newID = CreateID($2);
-		    newID->type = "Function_";
+		    newID->type = strdup("Function_");
 		    strcat(newID->type, $8);
 		    Insert(Top(SymbolTables)->table, newID);
 		    Dump(Top(SymbolTables)->table);
@@ -507,7 +508,7 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 
 		  if(newID == NULL){
 		    newID = CreateID($2);
-		    newID->type = "Function_";
+		    newID->type = strdup("Function_");
 		    strcat(newID->type, $7);
 		    Insert(Top(SymbolTables)->table, newID);
 		    Dump(Top(SymbolTables)->table);
@@ -524,7 +525,7 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 
 		  if(newID == NULL){
 		    newID = CreateID($2);
-		    newID->type = "Function";
+		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
 		    Dump(Top(SymbolTables)->table);
 		  }
@@ -540,7 +541,7 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 
 		  if(newID == NULL){
 		    newID = CreateID($2);
-		    newID->type = "Function";
+		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
 		    Dump(Top(SymbolTables)->table);
 		  }
@@ -627,7 +628,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		  else{
 		    switch(nowType){
 		      case 0:
-		        if(strcmp("int", newID->type) == 0 || strcmp("nint", newID->type) == 0){
+		        if(newID->type == NULL || strcmp("int", newID->type) == 0 || strcmp("nint", newID->type) == 0){
 			  int* temp = (int*)malloc(sizeof(int));
 			  *temp = atoi($3);
 			  newID->value = (void*)temp;
@@ -637,7 +638,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 			}
 		        break;
 		      case 1:
-		        if(strcmp("float", newID->type) == 0 || strcmp("nfloat", newID->type) == 0){
+		        if(newID->type == NULL || strcmp("float", newID->type) == 0 || strcmp("nfloat", newID->type) == 0){
 			  float* temp = (float*)malloc(sizeof(float));
 			  *temp = atof($3);
 			  newID->value = (void*)temp;
@@ -647,7 +648,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 			}
 		        break;
 		      case 2:
-		        if(strcmp("str", newID->type) == 0 || strcmp("nstr", newID->type) == 0){
+		        if(newID->type == NULL || strcmp("str", newID->type) == 0 || strcmp("nstr", newID->type) == 0){
 			  newID->value = (void*)$3;
 			}
 			else{
@@ -655,7 +656,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 			}
 		        break;
 		      case 3:
-		        if(strcmp("bool", newID->type) == 0 || strcmp("nbool", newID->type) == 0){
+		        if(newID->type == NULL || strcmp("bool", newID->type) == 0 || strcmp("nbool", newID->type) == 0){
 			  newID->value = (void*)$3;
 			}
 			else{
@@ -663,6 +664,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 			}
 		        break;
 		      default:
+			printf("Error: Undefined type\n");
 		        break;
 		    }
 		  }
@@ -743,7 +745,11 @@ expr:		integer_expr
 		    printf("Error: Undefined variable\n");
 		  }
 		  else{
-		    if(strcmp(newID->type, "int") == 0 ||strcmp(newID->type, "nint") == 0){
+		    if(newID->type == NULL){
+		      $$ = strdup("0");
+		      nowType = 0;
+		    }
+		    else if(strcmp(newID->type, "int") == 0 ||strcmp(newID->type, "nint") == 0){
 		      sprintf($$, "%d", *(int*)newID->value);
 		      nowType = 0;
 		    }
@@ -959,6 +965,8 @@ array_ref:	IDENTIFIER SBRACKETSL integer_expr SBRACKETSR
 func_invoke:	IDENTIFIER PARENTHESESL func_invoke_arg PARENTHESESR
 		{
 		  Trace("Reducing to function invocation\n");
+		  $$ = strdup("0");
+		  nowType = 0;
 		}
 		;
 

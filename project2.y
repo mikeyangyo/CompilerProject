@@ -96,16 +96,22 @@
 program:        normal_declars func_declars
                 {
                   Trace("Reducing to program\n");
+printf("top table's name = %s\n", Top(SymbolTables)->tableName);
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
                 }
 		|
 		normal_declars
                 {
                   Trace("Reducing to program\n");
+printf("top table's name = %s\n", Top(SymbolTables)->tableName);
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
                 }
 		|
 		func_declars
                 {
                   Trace("Reducing to program\n");
+printf("top table's name = %s\n", Top(SymbolTables)->tableName);
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
                 }
 		;
 normal_declars:	normal_declars constant_declar SEMICOLON
@@ -214,7 +220,6 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      printf("Error: nowType is out of range [0,3]\n, nowType = %d", nowType);
 		      nowType = -1;
 		    }		  
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("Error: %s already exists!", $2);
@@ -265,7 +270,6 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      printf("Error: nowType is out of range [0,3]\n, nowType = %d", nowType);
 		      nowType = -1;
 		    }
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("Error: %s already exists!", $2);
@@ -350,7 +354,6 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    printf("Error: nowType is out of range [0,3]\n, nowType = %d", nowType);
 		    nowType = -1;
 		  }		  
-		  Dump(Top(SymbolTables)->table);
 		}
 		|
 		LET MUT IDENTIFIER COLON type
@@ -382,7 +385,6 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		  if(existed == 0){
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
-		  Dump(Top(SymbolTables)->table);
 		}
 		|
 		LET MUT IDENTIFIER ASSIGN constant_expr
@@ -441,7 +443,6 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    printf("Error: nowType is out of range [0,3]\n, nowType = %d", nowType);
 		    nowType = -1;
 		  }
-		  Dump(Top(SymbolTables)->table);
 		}
 		|
 		LET MUT IDENTIFIER
@@ -451,7 +452,6 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    ID *newID = CreateID($3);
 		    
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("Error: %s already exists!\n", $3);
@@ -480,7 +480,6 @@ array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA NUMBER SBRACKETSR
 		  if(existed == 0){
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
-		  Dump(Top(SymbolTables)->table);
 		}
 		;
 
@@ -494,7 +493,6 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 		    newID->type = strdup("Function_");
 		    strcat(newID->type, $8);
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("%s already existed!\n", $2);
@@ -511,7 +509,6 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 		    newID->type = strdup("Function_");
 		    strcat(newID->type, $7);
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("%s already existed!\n", $2);
@@ -527,7 +524,6 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 		    newID = CreateID($2);
 		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("%s already existed!\n", $2);
@@ -543,7 +539,6 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 		    newID = CreateID($2);
 		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("%s already existed!\n", $2);
@@ -556,14 +551,32 @@ func_argument:	func_argument COMMA IDENTIFIER COLON type
 		IDENTIFIER COLON type
 		;
 
-block:		CBRACKETSL normal_declars stmts CBRACKETSR
+block:		cl normal_declars stmts CBRACKETSR
 		{
 		  Trace("Reducing to block w/ normal declaration and statements\n");
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
+		  Pop(SymbolTables);
 		}
 		|
-		CBRACKETSL stmts CBRACKETSR
+		cl stmts CBRACKETSR
 		{
 		  Trace("Reducing to block w/ statements\n");
+printf("top table's name = %s\n", Top(SymbolTables)->tableName);
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
+		  Pop(SymbolTables);
+		}
+		;
+
+cl:		CBRACKETSL
+		{
+		  // create new table
+		  char *tableName = strdup("Table ");
+		  char *name = (char*)malloc(sizeof(char));
+		  sprintf(name, "%d", nowTableName);
+		  nowTableName++;
+		  strcat(tableName, name);
+		  IDstk *newTable = stkCreate(strdup(tableName));
+		  stkInsert(SymbolTables, newTable);
 		}
 		;
 
@@ -1048,6 +1061,7 @@ constant_expr:	NUMBER
 
 IDstk *SymbolTables = NULL;
 int nowType = -1;
+int nowTableName = 0;
 
 yyerror(msg)
 char *msg;
@@ -1064,8 +1078,15 @@ main(int argc, char **argv)
     }
     yyin = fopen(argv[1], "r");         /* open input file */
 
-    /* create the stack of tables */
-    SymbolTables = stkCreate();
+    // create new table
+    char *tableName = strdup("Table ");
+    char *name = (char*)malloc(sizeof(char));
+    sprintf(name, "%d", nowTableName);
+    nowTableName++;
+    strcat(tableName, name);
+    SymbolTables = stkCreate(strdup(tableName));
+
+printf("name = %s\n", SymbolTables->tableName);
 
     /* perform parsing */
     if (yyparse() == 1)                 /* parsing */

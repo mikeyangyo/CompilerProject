@@ -32,9 +32,9 @@ int Insert(ID *givenList, ID *newID){
   return i;
 }
 
-int Dump(ID* givenList){
+int Dump(ID *givenList, char *tableName){
   ID *current = givenList;
-  printf("\nSymbol Table:\n");
+  printf("\nSymbol Table: %s\n", tableName);
   while(current->next != NULL){
     printval(current);
     current = current->next;
@@ -67,98 +67,99 @@ ID* Search(ID *givenList, char *sname){
 // print id value
 void printval(ID *nowID){
   if(nowID->type == NULL){
-    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
   }
   else if(strcmp(nowID->type, "int") == 0){
     if(nowID->value == NULL){
-      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
       return;
     }
-    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *((int*)nowID->value));
+    printf("%s\t\t%s\t\t%d\n", nowID->name, nowID->type, *((int*)nowID->value));
   }
   else if(strcmp(nowID->type, "nint") == 0){
     if(nowID->value == NULL){
-      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
       return;
     }
-    printf("%s\t%s\t%d\n", nowID->name, NULL, *((int*)nowID->value));
+    printf("%s\t\t%s\t\t%d\n", nowID->name, NULL, *((int*)nowID->value));
   }
   else if(strcmp(nowID->type, "str") == 0){
     if(nowID->value == NULL){
-      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
       return;
     }
-    printf("%s\t%s\t%s\n", nowID->name, nowID->type, (char*)nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, (char*)nowID->value);
   }
   else if(strcmp(nowID->type, "nstr") == 0){
     if(nowID->value == NULL){
-      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
       return;
     }
-    printf("%s\t%s\t%s\n", nowID->name, NULL, (char*)nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, NULL, (char*)nowID->value);
   }
   else if(strcmp(nowID->type, "float") == 0){
     if(nowID->value == NULL){
-      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
       return;
     }
-    printf("%s\t%s\t%2f\n", nowID->name, nowID->type, *((float*)nowID->value));
+    printf("%s\t\t%s\t\t%2f\n", nowID->name, nowID->type, *((float*)nowID->value));
   }
   else if(strcmp(nowID->type, "nfloat") == 0){
     if(nowID->value == NULL){
-      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
       return;
     }
-    printf("%s\t%s\t%2f\n", nowID->name, NULL, *((float*)nowID->value));
+    printf("%s\t\t%s\t\t%2f\n", nowID->name, NULL, *((float*)nowID->value));
   }
   else if(strcmp(nowID->type, "bool") == 0){
     if(nowID->value == NULL){
-      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
       return;
     }
-    printf("%s\t%s\t%s\n", nowID->name, nowID->type, (char*)nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, (char*)nowID->value);
   }
   else if(strcmp(nowID->type, "nbool") == 0){
     if(nowID->value == NULL){
-      printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+      printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
       return;
     }
-    printf("%s\t%s\t%s\n", nowID->name, NULL, (char*)nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, NULL, (char*)nowID->value);
   }
   else if(strcmp(nowID->type, "int_array") == 0){
-    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
+    printf("%s\t\t%s\t\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
   }
   else if(strcmp(nowID->type, "str_array") == 0){
-    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
+    printf("%s\t\t%s\t\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
   }
   else if(strcmp(nowID->type, "float_array") == 0){
-    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
+    printf("%s\t\t%s\t\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
   }
   else if(strcmp(nowID->type, "bool_array") == 0){
-    printf("%s\t%s\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
+    printf("%s\t\t%s\t\t%d\n", nowID->name, nowID->type, *(int*)nowID->value);
   }
   else if(strcmp(nowID->type, "Function") == 0){
-    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
   }
   else if(strcmp(nowID->type, "Function_int") == 0){
-    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
   }
   else if(strcmp(nowID->type, "Function_float") == 0){
-    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
   }
   else if(strcmp(nowID->type, "Function_str") == 0){
-    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
   }
   else if(strcmp(nowID->type, "Function_float") == 0){
-    printf("%s\t%s\t%s\n", nowID->name, nowID->type, nowID->value);
+    printf("%s\t\t%s\t\t%s\n", nowID->name, nowID->type, nowID->value);
   }
   else{
     printf("Error: ID type is wrong, type = %s\n", nowID->type);
   }
 }
 
-IDstk* stkCreate(){
+IDstk* stkCreate(char *tableName){
   IDstk* newSTK = (IDstk*)malloc(sizeof(IDstk));
+  newSTK->tableName = strdup(tableName);
   newSTK->table = Create();
   newSTK->next = NULL;
   return newSTK;
@@ -183,8 +184,6 @@ void Pop(IDstk* givenSTK){
     nowstk = nowstk->next;
     i++;
   }
-  free(nowstk->table);
-  free(nowstk->next);
   for(i = i-1;i>=0;i--){
     newstk = newstk->next;
   }

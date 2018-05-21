@@ -15,6 +15,7 @@
 %type <sval> integer_expr_arg
 %type <sval> boolean_expr
 %type <sval> boolean_expr_arg
+%type <sval> func_invoke
 /* tokens */
 %token SEMICOLON
 %token <sval> IDENTIFIER
@@ -490,7 +491,7 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 
 		  if(newID == NULL){
 		    newID = CreateID($2);
-		    newID->type = "Function_";
+		    newID->type = strdup("Function_");
 		    strcat(newID->type, $8);
 		    Insert(Top(SymbolTables)->table, newID);
 		    Dump(Top(SymbolTables)->table);
@@ -507,7 +508,7 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 
 		  if(newID == NULL){
 		    newID = CreateID($2);
-		    newID->type = "Function_";
+		    newID->type = strdup("Function_");
 		    strcat(newID->type, $7);
 		    Insert(Top(SymbolTables)->table, newID);
 		    Dump(Top(SymbolTables)->table);
@@ -524,7 +525,7 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 
 		  if(newID == NULL){
 		    newID = CreateID($2);
-		    newID->type = "Function";
+		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
 		    Dump(Top(SymbolTables)->table);
 		  }
@@ -540,7 +541,7 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 
 		  if(newID == NULL){
 		    newID = CreateID($2);
-		    newID->type = "Function";
+		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
 		    Dump(Top(SymbolTables)->table);
 		  }
@@ -627,18 +628,17 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		  else{
 		    switch(nowType){
 		      case 0:
-		        if(strcmp("int", newID->type) == 0 || strcmp("nint", newID->type) == 0){
+		        if(newID->type == NULL || strcmp("int", newID->type) == 0 || strcmp("nint", newID->type) == 0){
 			  int* temp = (int*)malloc(sizeof(int));
 			  *temp = atoi($3);
 			  newID->value = (void*)temp;
-			  printf("%s's value = %d", newID->name, *(int*)newID->value);
 			}
 			else{
 			  printf("Error: Unsuitable type\n");
 			}
 		        break;
 		      case 1:
-		        if(strcmp("float", newID->type) == 0 || strcmp("nfloat", newID->type) == 0){
+		        if(newID->type == NULL || strcmp("float", newID->type) == 0 || strcmp("nfloat", newID->type) == 0){
 			  float* temp = (float*)malloc(sizeof(float));
 			  *temp = atof($3);
 			  newID->value = (void*)temp;
@@ -648,7 +648,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 			}
 		        break;
 		      case 2:
-		        if(strcmp("str", newID->type) == 0 || strcmp("nstr", newID->type) == 0){
+		        if(newID->type == NULL || strcmp("str", newID->type) == 0 || strcmp("nstr", newID->type) == 0){
 			  newID->value = (void*)$3;
 			}
 			else{
@@ -656,7 +656,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 			}
 		        break;
 		      case 3:
-		        if(strcmp("bool", newID->type) == 0 || strcmp("nbool", newID->type) == 0){
+		        if(newID->type == NULL || strcmp("bool", newID->type) == 0 || strcmp("nbool", newID->type) == 0){
 			  newID->value = (void*)$3;
 			}
 			else{
@@ -664,6 +664,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 			}
 		        break;
 		      default:
+			printf("Error: Undefined type\n");
 		        break;
 		    }
 		  }
@@ -732,7 +733,7 @@ expr:		integer_expr
 		|
 		constant_expr
 		{
-		  Trace("Reducing to constant expression\n");
+		  Trace("Reducing to expression\n");
 		  $$ = $1;
 		}
 		|
@@ -744,23 +745,29 @@ expr:		integer_expr
 		    printf("Error: Undefined variable\n");
 		  }
 		  else{
-		    if(strcmp(newID->type, "int") == 0 ||strcmp(newID->type, "nint") == 0){
+		    if(newID->type == NULL){
+		      $$ = strdup("0");
+		      nowType = 0;
+		    }
+		    else if(strcmp(newID->type, "int") == 0 ||strcmp(newID->type, "nint") == 0){
 		      sprintf($$, "%d", *(int*)newID->value);
+		      nowType = 0;
 		    }
 		    else if(strcmp(newID->type, "float") == 0 ||strcmp(newID->type, "nfloat") == 0){
 		      sprintf($$, "%f", *(float*)newID->value);
+		      nowType = 1;
 		    }
 		    else if(strcmp(newID->type, "str") == 0 ||strcmp(newID->type, "nstr") == 0){
 		      $$ = (char*)newID->value;
+		      nowType = 2;
 		    }
 		    else if(strcmp(newID->type, "bool") == 0 ||strcmp(newID->type, "nbool") == 0){
 		      $$ = (char*)newID->value;
+		      nowType = 3;
 		    }
 		    else{
 		      printf("Error: Can't print type %s variable\n", newID->type);
 		    }
-
-		    printf("print value = %s\n", $$);
 		  }
 		}
 		|
@@ -775,7 +782,7 @@ expr:		integer_expr
 		}
 		;
 
-integer_expr:	integer_expr PLUS integer_expr_arg
+integer_expr:	integer_expr PLUS integer_expr
 		{
 		  printf("Reducing to integer expression\n");
 		  if(nowType == 0){
@@ -788,7 +795,7 @@ integer_expr:	integer_expr PLUS integer_expr_arg
 		  }
 		}
 		|
-		integer_expr MINUS integer_expr_arg
+		integer_expr MINUS integer_expr
 		{
 		  printf("Reducing to integer expression\n");
 		  if(nowType == 0){
@@ -801,7 +808,7 @@ integer_expr:	integer_expr PLUS integer_expr_arg
 		  }
 		}
 		|
-		integer_expr MULTIPLY integer_expr_arg
+		integer_expr MULTIPLY integer_expr
 		{
 		  printf("Reducing to integer expression\n");
 		  if(nowType == 0){
@@ -814,7 +821,7 @@ integer_expr:	integer_expr PLUS integer_expr_arg
 		  }
 		}
 		|
-		integer_expr DIVIDE integer_expr_arg
+		integer_expr DIVIDE integer_expr
 		{
 		  if(nowType == 0){
 		    sprintf($$, "%d", atoi($1) / atoi($3));
@@ -826,7 +833,7 @@ integer_expr:	integer_expr PLUS integer_expr_arg
 		  }
 		}
 		|
-		MINUS integer_expr_arg %prec UMINUS
+		MINUS integer_expr %prec UMINUS
 		{
 		  printf("Reducing to integer expression\n");
 		  if(nowType == 0){
@@ -839,14 +846,7 @@ integer_expr:	integer_expr PLUS integer_expr_arg
 		  }
 		}
 		|
-		integer_expr_arg
-		{
-		  printf("integer_expr_arg = %s\n", $1);
-		  $$ = $1;
-		}
-		;
-
-integer_expr_arg:NUMBER
+		NUMBER
 		{
 		  $$ = $1;
 		  nowType = 0;
@@ -855,94 +855,103 @@ integer_expr_arg:NUMBER
 		REALNUMBER
 		{
 		  $$ = $1;
-		  printf("real number = %s in yacc\n", $$);
 		  nowType = 1;
 		}
+		|
 		IDENTIFIER
 		{
-		  printf("%s\n", $1);
+		  /*printf("%s\n", $1);
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
-		  if(newID->type == "int"){
-		    sprintf($$, "%d", *(int*)newID->value);
-		    nowType = 0;
-		  }
-		  else if(newID->type == "float"){
-		    sprintf($$, "%f", *(float*)newID->value);
-		    nowType = 0;
+		  if(newID == NULL){
+			  if(newID->type == "int" ||newID->type == "nint"){
+			    sprintf($$, "%d", *(int*)newID->value);
+			    nowType = 0;
+			  }
+			  else if(newID->type == "float" || newID->type == "nfloat"){
+			    sprintf($$, "%f", *(float*)newID->value);
+			    nowType = 0;
+			  }
+			  else{
+			    printf("Error: the type is not a real number\n");
+			  }
 		  }
 		  else{
-		    printf("Error: the type is not a real number\n");
+		    printf("Error: %s doesn't exist\n", $1);
+		    $$ = strdup("0");
 		  }
+*/
 		}
 		;
 
-boolean_expr:	boolean_expr AND boolean_expr_arg
+boolean_expr:	boolean_expr AND boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		}
 		|
-		boolean_expr OR boolean_expr_arg
+		boolean_expr OR boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		}
 		|
-		NOT boolean_expr_arg
+		NOT boolean_expr
+		{
+		  printf("Reducing to boolean expression\n");
+		}
+		boolean_expr LESST boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		}
 		|
-		boolean_expr LESST boolean_expr_arg
+		boolean_expr LESSE boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		}
 		|
-		boolean_expr LESSE boolean_expr_arg
+		boolean_expr LARGERT boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		}
 		|
-		boolean_expr LARGERT boolean_expr_arg
+		boolean_expr LARGERE boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		}
 		|
-		boolean_expr LARGERE boolean_expr_arg
+		boolean_expr EQUAL boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		}
 		|
-		boolean_expr EQUAL boolean_expr_arg
+		boolean_expr NEQUAL boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		}
 		|
-		boolean_expr NEQUAL boolean_expr_arg
+		TRUE
 		{
 		  printf("Reducing to boolean expression\n");
 		}
 		|
-		boolean_expr_arg
+		FALSE		
 		{
 		  printf("Reducing to boolean expression\n");
 		}
-		;
-
-boolean_expr_arg:TRUE
-		{
-		  printf("Reducing to boolean expression argument\n");
-		  $$ = "true";
-		  nowType = 3;
-		}
 		|
-		FALSE
-		{
-		  printf("Reducing to boolean expression argument\n");
-		  $$ = "false";
-		  nowType = 3;
-		}
 		IDENTIFIER
 		{
-		  printf("Reducing to boolean expression argument\n");
+		  printf("Reducing to boolean expression\n");
+		  $$ = $1;
+		}
+		|
+		NUMBER
+		{
+		  printf("Reducing to boolean expression\n");
+		  $$ = $1;
+		}
+		|
+		REALNUMBER
+		{
+		  printf("Reducing to boolean expression\n");
 		  $$ = $1;
 		}
 		;
@@ -956,6 +965,8 @@ array_ref:	IDENTIFIER SBRACKETSL integer_expr SBRACKETSR
 func_invoke:	IDENTIFIER PARENTHESESL func_invoke_arg PARENTHESESR
 		{
 		  Trace("Reducing to function invocation\n");
+		  $$ = strdup("0");
+		  nowType = 0;
 		}
 		;
 

@@ -8,10 +8,12 @@ typedef struct Id{
 }ID;
 
 typedef struct stk{
+  int tableName;
   struct Id *table;
   struct stk *next;
 }IDstk;
 
+int nowTableName;
 // create an ID with newName
 ID* CreateID(char *newName);
 // create an ID-list
@@ -19,7 +21,7 @@ ID* Create();
 // insert an newID in linked-list
 int Insert(ID *givenList, ID *newID);
 // dump the link
-int Dump(ID *givenList);
+int Dump(ID *givenList, int name);
 // search where the ID with sname is
 ID* Search(ID *givenList, char *sname);
 // print id value

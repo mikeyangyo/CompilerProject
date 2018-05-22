@@ -96,16 +96,19 @@
 program:        normal_declars func_declars
                 {
                   Trace("Reducing to program\n");
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
                 }
 		|
 		normal_declars
                 {
                   Trace("Reducing to program\n");
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
                 }
 		|
 		func_declars
                 {
                   Trace("Reducing to program\n");
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
                 }
 		;
 normal_declars:	normal_declars constant_declar SEMICOLON
@@ -214,7 +217,6 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      printf("Error: nowType is out of range [0,3]\n, nowType = %d", nowType);
 		      nowType = -1;
 		    }		  
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("Error: %s already exists!", $2);
@@ -265,7 +267,6 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      printf("Error: nowType is out of range [0,3]\n, nowType = %d", nowType);
 		      nowType = -1;
 		    }
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("Error: %s already exists!", $2);
@@ -350,7 +351,6 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    printf("Error: nowType is out of range [0,3]\n, nowType = %d", nowType);
 		    nowType = -1;
 		  }		  
-		  Dump(Top(SymbolTables)->table);
 		}
 		|
 		LET MUT IDENTIFIER COLON type
@@ -382,7 +382,6 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		  if(existed == 0){
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
-		  Dump(Top(SymbolTables)->table);
 		}
 		|
 		LET MUT IDENTIFIER ASSIGN constant_expr
@@ -441,17 +440,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    printf("Error: nowType is out of range [0,3]\n, nowType = %d", nowType);
 		    nowType = -1;
 		  }
-		  Dump(Top(SymbolTables)->table);
 		}
 		|
 		LET MUT IDENTIFIER
 		{
 		  Trace("Reducing to variable declaration w/ no type and initial value\n");
 		  if(Search(Top(SymbolTables)->table, $3) == NULL){
-		    ID *newID = CreateID($3);
-		    
+		    ID *newID = CreateID($3);	    
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("Error: %s already exists!\n", $3);
@@ -480,7 +476,6 @@ array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA NUMBER SBRACKETSR
 		  if(existed == 0){
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
-		  Dump(Top(SymbolTables)->table);
 		}
 		;
 
@@ -494,7 +489,6 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 		    newID->type = strdup("Function_");
 		    strcat(newID->type, $8);
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("%s already existed!\n", $2);
@@ -511,7 +505,6 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 		    newID->type = strdup("Function_");
 		    strcat(newID->type, $7);
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("%s already existed!\n", $2);
@@ -527,7 +520,6 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 		    newID = CreateID($2);
 		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("%s already existed!\n", $2);
@@ -543,7 +535,6 @@ func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT
 		    newID = CreateID($2);
 		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
-		    Dump(Top(SymbolTables)->table);
 		  }
 		  else{
 		    printf("%s already existed!\n", $2);
@@ -556,14 +547,31 @@ func_argument:	func_argument COMMA IDENTIFIER COLON type
 		IDENTIFIER COLON type
 		;
 
-block:		CBRACKETSL normal_declars stmts CBRACKETSR
+block:		cl normal_declars stmts CBRACKETSR
 		{
 		  Trace("Reducing to block w/ normal declaration and statements\n");
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
+		  Pop(SymbolTables);
 		}
 		|
-		CBRACKETSL stmts CBRACKETSR
+		cl stmts CBRACKETSR
 		{
 		  Trace("Reducing to block w/ statements\n");
+		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
+		  Pop(SymbolTables);
+		}
+		;
+
+cl:		CBRACKETSL
+		{
+		  // create new table
+		  /*char *tableName = strdup("Table ");
+		  char *name = (char*)malloc(sizeof(char));
+		  sprintf(name, "%d", nowTableName);
+		  nowTableName++;
+		  strcat(tableName, name);*/
+		  IDstk *newTable = stkCreate();
+		  stkInsert(SymbolTables, newTable);
 		}
 		;
 
@@ -1057,6 +1065,7 @@ char *msg;
 
 main(int argc, char **argv)
 {
+    nowTableName = 0;
     /* open the source program file */
     if (argc != 2) {
         printf ("Usage: sc filename\n");
@@ -1064,8 +1073,14 @@ main(int argc, char **argv)
     }
     yyin = fopen(argv[1], "r");         /* open input file */
 
-    /* create the stack of tables */
+    // create new table
+    //char *tableName = strdup("Global");
+    /*char *name = (char*)malloc(sizeof(char));
+    sprintf(name, "%d", nowTableName);
+    nowTableName++;*/
+    //strcat(tableName, "table");
     SymbolTables = stkCreate();
+
 
     /* perform parsing */
     if (yyparse() == 1)                 /* parsing */

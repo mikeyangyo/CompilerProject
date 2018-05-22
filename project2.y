@@ -96,21 +96,18 @@
 program:        normal_declars func_declars
                 {
                   Trace("Reducing to program\n");
-printf("top table's name = %s\n", Top(SymbolTables)->tableName);
 		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
                 }
 		|
 		normal_declars
                 {
                   Trace("Reducing to program\n");
-printf("top table's name = %s\n", Top(SymbolTables)->tableName);
 		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
                 }
 		|
 		func_declars
                 {
                   Trace("Reducing to program\n");
-printf("top table's name = %s\n", Top(SymbolTables)->tableName);
 		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
                 }
 		;
@@ -449,8 +446,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		{
 		  Trace("Reducing to variable declaration w/ no type and initial value\n");
 		  if(Search(Top(SymbolTables)->table, $3) == NULL){
-		    ID *newID = CreateID($3);
-		    
+		    ID *newID = CreateID($3);	    
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
 		  else{
@@ -561,7 +557,6 @@ block:		cl normal_declars stmts CBRACKETSR
 		cl stmts CBRACKETSR
 		{
 		  Trace("Reducing to block w/ statements\n");
-printf("top table's name = %s\n", Top(SymbolTables)->tableName);
 		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
 		  Pop(SymbolTables);
 		}
@@ -570,12 +565,12 @@ printf("top table's name = %s\n", Top(SymbolTables)->tableName);
 cl:		CBRACKETSL
 		{
 		  // create new table
-		  char *tableName = strdup("Table ");
+		  /*char *tableName = strdup("Table ");
 		  char *name = (char*)malloc(sizeof(char));
 		  sprintf(name, "%d", nowTableName);
 		  nowTableName++;
-		  strcat(tableName, name);
-		  IDstk *newTable = stkCreate(strdup(tableName));
+		  strcat(tableName, name);*/
+		  IDstk *newTable = stkCreate();
 		  stkInsert(SymbolTables, newTable);
 		}
 		;
@@ -1061,7 +1056,6 @@ constant_expr:	NUMBER
 
 IDstk *SymbolTables = NULL;
 int nowType = -1;
-int nowTableName = 0;
 
 yyerror(msg)
 char *msg;
@@ -1071,6 +1065,7 @@ char *msg;
 
 main(int argc, char **argv)
 {
+    nowTableName = 0;
     /* open the source program file */
     if (argc != 2) {
         printf ("Usage: sc filename\n");
@@ -1079,14 +1074,13 @@ main(int argc, char **argv)
     yyin = fopen(argv[1], "r");         /* open input file */
 
     // create new table
-    char *tableName = strdup("Table ");
-    char *name = (char*)malloc(sizeof(char));
+    //char *tableName = strdup("Global");
+    /*char *name = (char*)malloc(sizeof(char));
     sprintf(name, "%d", nowTableName);
-    nowTableName++;
-    strcat(tableName, name);
-    SymbolTables = stkCreate(strdup(tableName));
+    nowTableName++;*/
+    //strcat(tableName, "table");
+    SymbolTables = stkCreate();
 
-printf("name = %s\n", SymbolTables->tableName);
 
     /* perform parsing */
     if (yyparse() == 1)                 /* parsing */

@@ -32,9 +32,9 @@ int Insert(ID *givenList, ID *newID){
   return i;
 }
 
-int Dump(ID *givenList, char *tableName){
+int Dump(ID *givenList, int name){
   ID *current = givenList;
-  printf("\nSymbol Table: %s\n", tableName);
+  printf("\nSymbol Table %d:\n", name);
   while(current->next != NULL){
     printval(current);
     current = current->next;
@@ -157,9 +157,10 @@ void printval(ID *nowID){
   }
 }
 
-IDstk* stkCreate(char *tableName){
+IDstk* stkCreate(){
   IDstk* newSTK = (IDstk*)malloc(sizeof(IDstk));
-  newSTK->tableName = strdup(tableName);
+  nowTableName++;
+  newSTK->tableName = nowTableName;
   newSTK->table = Create();
   newSTK->next = NULL;
   return newSTK;
@@ -184,7 +185,7 @@ void Pop(IDstk* givenSTK){
     nowstk = nowstk->next;
     i++;
   }
-  for(i = i-1;i>=0;i--){
+  for(i = i-1;i>0;i--){
     newstk = newstk->next;
   }
   newstk->next = NULL;

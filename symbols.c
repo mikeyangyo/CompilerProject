@@ -6,6 +6,7 @@ ID* CreateID(char *newName){
   newID->name = newName;
   newID->type = NULL;
   newID->value = NULL;
+  newID->stkIndex = -1;
   newID->next = NULL;
   return newID;
 }
@@ -21,6 +22,7 @@ int Insert(ID *givenList, ID *newID){
     current->name = newID->name;
     current->type = newID->type;
     current->value = newID->value;
+    current->stkIndex = newID->stkIndex
     current->next = newID->next;
     return 0;
   }

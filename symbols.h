@@ -4,6 +4,7 @@ typedef struct Id{
   char *name;
   char *type;
   void *value;
+  int stkIndex;
   struct Id *next;
 }ID;
 

@@ -11,3 +11,7 @@ sipush 66
 istore 2
 sipush 1
 istore 3
+sipush 55
+iconst_0
+sipush 1
+iconst_0

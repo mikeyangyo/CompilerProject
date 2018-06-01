@@ -902,6 +902,32 @@ expr:		integer_expr
 		      printf("Error: Can't print type %s variable\n", newID->type);
 		    }
 		  }
+		  if(newID->globalORlocal == 0){
+		    if(newID->value != NULL){
+		      if(strcmp(newID->type, "int") == 0 || strcmp(newID->type, "nint") == 0){
+			fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
+		      }
+		      else{
+			fprintf(Instructions, "iconst_%d\n", (strcmp("true",newID->value)==0?1:0));
+		      }
+		    }
+		    else{
+		      fprintf(Instructions, "getstatic int project3.%s\n", $1);
+		    }
+		  }
+		  else{
+		    if(newID->value != NULL){
+		      if(strcmp(newID->type, "int") == 0 || strcmp(newID->type, "nint") == 0){
+			fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
+		      }
+		      else{
+			fprintf(Instructions, "iconst_%d\n", (strcmp("true",newID->value)==0?1:0));
+		      }
+		    }
+		    else{
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    }
+		  }
 		}
 		|
 		func_invoke
@@ -981,6 +1007,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		|
 		NUMBER
 		{
+		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		  $$ = $1;
 		  nowType = 0;
 		}
@@ -1063,11 +1090,13 @@ boolean_expr:	boolean_expr AND boolean_expr
 		TRUE
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "iconst_1\n");
 		}
 		|
 		FALSE		
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "iconst_0\n");
 		}
 		|
 		IDENTIFIER

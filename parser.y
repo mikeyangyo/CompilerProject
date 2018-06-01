@@ -340,6 +340,17 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      newID->type = "int";
 		      newID->value = val;
 		      nowType = -1;
+
+		      if(Top(SymbolTables)->tableName == 1){
+			fprintf(Instructions, "field static integer %s = %s\n", $3, $7);
+		      }
+		      else{
+			fprintf(Instructions, "sipush %s\n", $7);
+			fprintf(Instructions, "istore %d\n", nowStkIndex);
+			newID->stkIndex = nowStkIndex;
+			nowStkIndex++;
+		      }
+
 		      if(existed == 0){
 			Insert(Top(SymbolTables)->table, newID);
 		      }
@@ -386,6 +397,17 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      newID->type = "bool";
 		      newID->value = val;
 		      nowType = -1;
+
+		      if(Top(SymbolTables)->tableName == 1){
+			fprintf(Instructions, "field static integer %s = %d\n", $3, (strcmp($7, "true")==0?1:0));
+		      }
+		      else{
+			fprintf(Instructions, "sipush %s\n", $7);
+			fprintf(Instructions, "istore %d\n", nowStkIndex);
+			newID->stkIndex = nowStkIndex;
+			nowStkIndex++;
+		      }
+
 		      if(existed == 0){
 			Insert(Top(SymbolTables)->table, newID);
 		      }
@@ -423,6 +445,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    }
 		  }
 
+		  if(Top(SymbolTables)->tableName == 1){
+		    fprintf(Instructions, "field static integer %s\n", $3);
+		  }
+		  else{
+		    newID->stkIndex = nowStkIndex;
+		    nowStkIndex++;
+		  }
+
 		  if(existed == 0){
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
@@ -445,6 +475,17 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    newID->type = "nint";
 		    newID->value = val;
 		    nowType = -1;
+
+		    if(Top(SymbolTables)->tableName == 1){
+		      fprintf(Instructions, "field static integer %s = %s\n", $3, $5);
+		    }
+		    else{
+		     fprintf(Instructions, "sipush %s\n", $5);
+		     fprintf(Instructions, "istore %d\n", nowStkIndex);
+		     newID->stkIndex = nowStkIndex;
+		     nowStkIndex++;
+		    }
+
 		    if(existed == 0){
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
@@ -476,6 +517,17 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    newID->type = "nbool";
 		    newID->value = val;
 		    nowType = -1;
+
+		    if(Top(SymbolTables)->tableName == 1){
+		      fprintf(Instructions, "field static integer %s = %d\n", $3, (strcmp($5, "true")==0?1:0));
+		    }
+		    else{
+		      fprintf(Instructions, "sipush %s\n", $5);
+		      fprintf(Instructions, "istore %d\n", nowStkIndex);
+		      newID->stkIndex = nowStkIndex;
+		      nowStkIndex++;
+		    }
+
 		    if(existed == 0){
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
@@ -490,7 +542,16 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		{
 		  Trace("Reducing to variable declaration w/ no type and initial value\n");
 		  if(Search(Top(SymbolTables)->table, $3) == NULL){
-		    ID *newID = CreateID($3);	    
+		    ID *newID = CreateID($3);
+
+		    if(Top(SymbolTables)->tableName == 1){
+		      fprintf(Instructions, "field static integer %s\n", $3);
+		    }
+		    else{
+		      newID->stkIndex = nowStkIndex;
+		      nowStkIndex++;
+		    }
+
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
 		  else{

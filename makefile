@@ -1,8 +1,8 @@
 parser: y.tab.h lex.yy.o y.tab.o symbols.o
 	gcc -o a y.tab.o symbols.o -lfl
 
-y.tab.h: project2.y
-	byacc -d project2.y
+y.tab.h: parser.y
+	byacc -d parser.y
 
 lex.yy.o: scanner.l y.tab.h
 	flex scanner.l

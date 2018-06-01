@@ -22,7 +22,7 @@ int Insert(ID *givenList, ID *newID){
     current->name = newID->name;
     current->type = newID->type;
     current->value = newID->value;
-    current->stkIndex = newID->stkIndex
+    current->stkIndex = newID->stkIndex;
     current->next = newID->next;
     return 0;
   }

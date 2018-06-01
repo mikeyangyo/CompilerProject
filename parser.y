@@ -1111,7 +1111,7 @@ char *msg;
 
 main(int argc, char **argv)
 {
-    Instructions = fopen("./instructions.jasm", "a+");
+    Instructions = fopen("./instructions.jasm", "w+");
     nowTableName = 0;
     /* open the source program file */
     if (argc != 2) {

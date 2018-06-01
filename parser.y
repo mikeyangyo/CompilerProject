@@ -170,6 +170,15 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        newID->type = "int";
 		        newID->value = val;
 		        nowType = -1;
+
+			if(Top(SymbolTables)->tableName == 1){
+			  fprintf(Instructions, "field static integer %s = %s\n", $2, $6);
+			}
+			else{
+			  
+			}
+			nowStkIndex++;
+
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
 		    }
@@ -210,6 +219,15 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        newID->type = "bool";
 		        newID->value = val;
 		        nowType = -1;
+
+			if(Top(SymbolTables)->tableName == 1){
+			  fprintf(Instructions, "field static integer %s = %d\n", $2, (strcmp($6, "true")==0?1:0));
+			}
+			else{
+			  
+			}
+			nowStkIndex++;
+
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
 		    }
@@ -1056,6 +1074,8 @@ constant_expr:	NUMBER
 
 IDstk *SymbolTables = NULL;
 int nowType = -1;
+int nowStkIndex = 0;
+FILE *Instructions;
 
 yyerror(msg)
 char *msg;
@@ -1065,6 +1085,7 @@ char *msg;
 
 main(int argc, char **argv)
 {
+    Instructions = fopen("./instructions.jasm", "a+");
     nowTableName = 0;
     /* open the source program file */
     if (argc != 2) {

@@ -170,6 +170,17 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        newID->type = "int";
 		        newID->value = val;
 		        nowType = -1;
+
+			if(Top(SymbolTables)->tableName == 1){
+			  fprintf(Instructions, "field static integer %s = %s\n", $2, $6);
+			}
+			else{
+			  fprintf(Instructions, "sipush %s\n", $6);
+			  fprintf(Instructions, "istore %d\n", nowStkIndex);
+			  newID->stkIndex = nowStkIndex;
+			  nowStkIndex++;
+			}
+
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
 		    }
@@ -210,6 +221,17 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        newID->type = "bool";
 		        newID->value = val;
 		        nowType = -1;
+
+			if(Top(SymbolTables)->tableName == 1){
+			  fprintf(Instructions, "field static integer %s = %d\n", $2, (strcmp($6, "true")==0?1:0));
+			}
+			else{
+			  fprintf(Instructions, "sipush %s\n", $6);
+			  fprintf(Instructions, "istore %d\n", nowStkIndex);
+			  newID->stkIndex = nowStkIndex;
+			  nowStkIndex++;
+			}
+
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
 		    }
@@ -236,6 +258,17 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      newID->type = "nint";
 		      newID->value = val;
 		      nowType = -1;
+
+		      if(Top(SymbolTables)->tableName == 1){
+			fprintf(Instructions, "field static integer %s\n", $2);
+		      }
+		      else{
+			fprintf(Instructions, "sipush %s\n", $4);
+			fprintf(Instructions, "istore %d\n", nowStkIndex);
+			newID->stkIndex = nowStkIndex;
+			nowStkIndex++;
+		      }
+
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
 		    else if(nowType == 1){
@@ -261,6 +294,17 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      newID->type = "nbool";
 		      newID->value = val;
 		      nowType = -1;
+
+		      if(Top(SymbolTables)->tableName == 1){
+			fprintf(Instructions, "field static integer %s\n", $2);
+		      }
+		      else{
+			fprintf(Instructions, "sipush %s\n", $4);
+			fprintf(Instructions, "istore %d\n", nowStkIndex);
+			newID->stkIndex = nowStkIndex;
+			nowStkIndex++;
+		      }
+
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
 		    else{
@@ -1056,6 +1100,8 @@ constant_expr:	NUMBER
 
 IDstk *SymbolTables = NULL;
 int nowType = -1;
+int nowStkIndex = 0;
+FILE *Instructions;
 
 yyerror(msg)
 char *msg;
@@ -1065,6 +1111,7 @@ char *msg;
 
 main(int argc, char **argv)
 {
+    Instructions = fopen("./instructions.jasm", "w+");
     nowTableName = 0;
     /* open the source program file */
     if (argc != 2) {

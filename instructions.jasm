@@ -1,0 +1,6 @@
+field static integer a
+field static integer b
+sipush 55
+istore 0
+sipush false
+istore 1

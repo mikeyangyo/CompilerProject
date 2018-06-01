@@ -868,6 +868,13 @@ expr:		integer_expr
 		{
 		  Trace("Reducing to expression\n");
 		  $$ = $1;
+
+		  if(strcmp($1, "true") != 0 || strcmp($1, "false") != 0){
+		    fprintf(Instruction, "sipush %d", atoi($1));
+		  }
+		  else{
+		    fprintf(Instruction, "iconst_%d", (strcmp("true",$1)==0?1:0));
+		  }
 		}
 		|
 		IDENTIFIER
@@ -900,6 +907,27 @@ expr:		integer_expr
 		    }
 		    else{
 		      printf("Error: Can't print type %s variable\n", newID->type);
+		    }
+		  }
+		  if(newID->globalORlocal == 0){
+		    if(newID->value != NULL){
+
+		    }
+		    else{
+		      fprintf(Instruction, "getstatic int project3.%s", $1);
+		    }
+		  }
+		  else{
+		    if(newID->value != NULL){
+		      if(strcmp(newID->valueType, "int") == 0 || strcmp(newID->valueType, "nint") == 0){
+			fprintf(Instruction, "sipush %d", *(int*)newID->value);
+		      }
+		      else{
+			fprintf(Instruction, "iconst_%d", (strcmp("true",newID->value)==0?1:0));
+		      }
+		    }
+		    else{
+		      fprintf(Instruction, "iload %d", newID->stkIndex);
 		    }
 		  }
 		}

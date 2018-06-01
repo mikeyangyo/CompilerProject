@@ -7,6 +7,7 @@ ID* CreateID(char *newName){
   newID->type = NULL;
   newID->value = NULL;
   newID->stkIndex = -1;
+  newID->globalORlocal = -1;
   newID->next = NULL;
   return newID;
 }

@@ -5,6 +5,7 @@ typedef struct Id{
   char *type;
   void *value;
   int stkIndex;
+  int globalORlocal; //0->global, 1->local
   struct Id *next;
 }ID;
 

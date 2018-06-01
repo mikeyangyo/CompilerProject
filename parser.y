@@ -254,6 +254,15 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      newID->type = "nint";
 		      newID->value = val;
 		      nowType = -1;
+
+		      if(Top(SymbolTables)->tableName == 1){
+			fprintf(Instructions, "field static integer %s\n", $2);
+		      }
+		      else{
+			  
+		      }
+		      nowStkIndex++;
+
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
 		    else if(nowType == 1){
@@ -279,6 +288,15 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      newID->type = "nbool";
 		      newID->value = val;
 		      nowType = -1;
+
+		      if(Top(SymbolTables)->tableName == 1){
+			fprintf(Instructions, "field static integer %s\n", $2);
+		      }
+		      else{
+			  
+		      }
+		      nowStkIndex++;
+
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
 		    else{

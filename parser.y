@@ -173,12 +173,14 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 
 			if(Top(SymbolTables)->tableName == 1){
 			  fprintf(Instructions, "field static integer %s = %s\n", $2, $6);
+			  newID->globalORlocal = 0;
 			}
 			else{
 			  fprintf(Instructions, "sipush %s\n", $6);
 			  fprintf(Instructions, "istore %d\n", nowStkIndex);
 			  newID->stkIndex = nowStkIndex;
 			  nowStkIndex++;
+			  newID->globalORlocal = 1;
 			}
 
 		        Insert(Top(SymbolTables)->table, newID);
@@ -224,12 +226,14 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 
 			if(Top(SymbolTables)->tableName == 1){
 			  fprintf(Instructions, "field static integer %s = %d\n", $2, (strcmp($6, "true")==0?1:0));
+			  newID->globalORlocal = 0;
 			}
 			else{
 			  fprintf(Instructions, "sipush %d\n", (strcmp($6, "true")==0?1:0));
 			  fprintf(Instructions, "istore %d\n", nowStkIndex);
 			  newID->stkIndex = nowStkIndex;
 			  nowStkIndex++;
+			  newID->globalORlocal = 1;
 			}
 
 		        Insert(Top(SymbolTables)->table, newID);
@@ -261,12 +265,14 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 
 		      if(Top(SymbolTables)->tableName == 1){
 			fprintf(Instructions, "field static integer %s = %s\n", $2, $4);
+			newID->globalORlocal = 0;
 		      }
 		      else{
 			fprintf(Instructions, "sipush %s\n", $4);
 			fprintf(Instructions, "istore %d\n", nowStkIndex);
 			newID->stkIndex = nowStkIndex;
 			nowStkIndex++;
+			newID->globalORlocal = 1;
 		      }
 
 		      Insert(Top(SymbolTables)->table, newID);
@@ -297,12 +303,14 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 
 		      if(Top(SymbolTables)->tableName == 1){
 			fprintf(Instructions, "field static integer %s = %d\n", $2, ((strcmp($4,"true")==0)?1:0));
+			newID->globalORlocal = 0;
 		      }
 		      else{
 			fprintf(Instructions, "sipush %d\n", (strcmp($4, "true")==0?1:0));
 			fprintf(Instructions, "istore %d\n", nowStkIndex);
 			newID->stkIndex = nowStkIndex;
 			nowStkIndex++;
+			newID->globalORlocal = 1;
 		      }
 
 		      Insert(Top(SymbolTables)->table, newID);
@@ -343,12 +351,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 
 		      if(Top(SymbolTables)->tableName == 1){
 			fprintf(Instructions, "field static integer %s = %s\n", $3, $7);
+			newID->globalORlocal = 0;
 		      }
 		      else{
 			fprintf(Instructions, "sipush %s\n", $7);
 			fprintf(Instructions, "istore %d\n", nowStkIndex);
 			newID->stkIndex = nowStkIndex;
 			nowStkIndex++;
+			newID->globalORlocal = 1;
 		      }
 
 		      if(existed == 0){
@@ -400,12 +410,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 
 		      if(Top(SymbolTables)->tableName == 1){
 			fprintf(Instructions, "field static integer %s = %d\n", $3, (strcmp($7, "true")==0?1:0));
+			newID->globalORlocal = 0;
 		      }
 		      else{
 			fprintf(Instructions, "sipush %d\n", (strcmp($7, "true")==0?1:0));
 			fprintf(Instructions, "istore %d\n", nowStkIndex);
 			newID->stkIndex = nowStkIndex;
 			nowStkIndex++;
+			newID->globalORlocal = 1;
 		      }
 
 		      if(existed == 0){
@@ -447,10 +459,12 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 
 		  if(Top(SymbolTables)->tableName == 1){
 		    fprintf(Instructions, "field static integer %s\n", $3);
+		    newID->globalORlocal = 0;
 		  }
 		  else{
 		    newID->stkIndex = nowStkIndex;
 		    nowStkIndex++;
+		    newID->globalORlocal = 1;
 		  }
 
 		  if(existed == 0){
@@ -478,12 +492,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 
 		    if(Top(SymbolTables)->tableName == 1){
 		      fprintf(Instructions, "field static integer %s = %s\n", $3, $5);
+		      newID->globalORlocal = 0;
 		    }
 		    else{
 		     fprintf(Instructions, "sipush %s\n", $5);
 		     fprintf(Instructions, "istore %d\n", nowStkIndex);
 		     newID->stkIndex = nowStkIndex;
 		     nowStkIndex++;
+		     newID->globalORlocal = 1;
 		    }
 
 		    if(existed == 0){
@@ -520,12 +536,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 
 		    if(Top(SymbolTables)->tableName == 1){
 		      fprintf(Instructions, "field static integer %s = %d\n", $3, (strcmp($5, "true")==0?1:0));
+		      newID->globalORlocal = 0;
 		    }
 		    else{
 		      fprintf(Instructions, "sipush %d\n", (strcmp($5, "true")==0?1:0));
 		      fprintf(Instructions, "istore %d\n", nowStkIndex);
 		      newID->stkIndex = nowStkIndex;
 		      nowStkIndex++;
+		      newID->globalORlocal = 1;
 		    }
 
 		    if(existed == 0){
@@ -546,10 +564,12 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 
 		    if(Top(SymbolTables)->tableName == 1){
 		      fprintf(Instructions, "field static integer %s\n", $3);
+		      newID->globalORlocal = 0;
 		    }
 		    else{
 		      newID->stkIndex = nowStkIndex;
 		      nowStkIndex++;
+		      newID->globalORlocal = 1;
 		    }
 
 		    Insert(Top(SymbolTables)->table, newID);

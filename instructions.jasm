@@ -5,9 +5,9 @@ field static integer f = 0
 field static integer g
 sipush 55
 istore 0
-sipush false
+sipush 0
 istore 1
 sipush 66
 istore 2
-sipush true
+sipush 1
 istore 3

@@ -175,9 +175,11 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 			  fprintf(Instructions, "field static integer %s = %s\n", $2, $6);
 			}
 			else{
-			  
+			  fprintf(Instructions, "sipush %s\n", $6);
+			  fprintf(Instructions, "istore %d\n", nowStkIndex);
+			  newID->stkIndex = nowStkIndex;
+			  nowStkIndex++;
 			}
-			nowStkIndex++;
 
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
@@ -224,9 +226,11 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 			  fprintf(Instructions, "field static integer %s = %d\n", $2, (strcmp($6, "true")==0?1:0));
 			}
 			else{
-			  
+			  fprintf(Instructions, "sipush %s\n", $6);
+			  fprintf(Instructions, "istore %d\n", nowStkIndex);
+			  newID->stkIndex = nowStkIndex;
+			  nowStkIndex++;
 			}
-			nowStkIndex++;
 
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
@@ -259,9 +263,11 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 			fprintf(Instructions, "field static integer %s\n", $2);
 		      }
 		      else{
-			  
+			fprintf(Instructions, "sipush %s\n", $4);
+			fprintf(Instructions, "istore %d\n", nowStkIndex);
+			newID->stkIndex = nowStkIndex;
+			nowStkIndex++;
 		      }
-		      nowStkIndex++;
 
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
@@ -293,9 +299,11 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 			fprintf(Instructions, "field static integer %s\n", $2);
 		      }
 		      else{
-			  
+			fprintf(Instructions, "sipush %s\n", $4);
+			fprintf(Instructions, "istore %d\n", nowStkIndex);
+			newID->stkIndex = nowStkIndex;
+			nowStkIndex++;
 		      }
-		      nowStkIndex++;
 
 		      Insert(Top(SymbolTables)->table, newID);
 		    }

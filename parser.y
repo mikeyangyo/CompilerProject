@@ -260,7 +260,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			fprintf(Instructions, "field static integer %s\n", $2);
+			fprintf(Instructions, "field static integer %s = %s\n", $2, $4);
 		      }
 		      else{
 			fprintf(Instructions, "sipush %s\n", $4);
@@ -296,7 +296,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			fprintf(Instructions, "field static integer %s\n", $2);
+			fprintf(Instructions, "field static integer %s = %d\n", $2, ((strcmp($4,"true")==0)?1:0));
 		      }
 		      else{
 			fprintf(Instructions, "sipush %s\n", $4);

@@ -868,13 +868,6 @@ expr:		integer_expr
 		{
 		  Trace("Reducing to expression\n");
 		  $$ = $1;
-
-		  if(strcmp($1, "true") != 0 || strcmp($1, "false") != 0){
-		    fprintf(Instruction, "sipush %d", atoi($1));
-		  }
-		  else{
-		    fprintf(Instruction, "iconst_%d", (strcmp("true",$1)==0?1:0));
-		  }
 		}
 		|
 		IDENTIFIER
@@ -911,23 +904,28 @@ expr:		integer_expr
 		  }
 		  if(newID->globalORlocal == 0){
 		    if(newID->value != NULL){
-
+		      if(strcmp(newID->type, "int") == 0 || strcmp(newID->type, "nint") == 0){
+			fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
+		      }
+		      else{
+			fprintf(Instructions, "iconst_%d\n", (strcmp("true",newID->value)==0?1:0));
+		      }
 		    }
 		    else{
-		      fprintf(Instruction, "getstatic int project3.%s", $1);
+		      fprintf(Instructions, "getstatic int project3.%s\n", $1);
 		    }
 		  }
 		  else{
 		    if(newID->value != NULL){
-		      if(strcmp(newID->valueType, "int") == 0 || strcmp(newID->valueType, "nint") == 0){
-			fprintf(Instruction, "sipush %d", *(int*)newID->value);
+		      if(strcmp(newID->type, "int") == 0 || strcmp(newID->type, "nint") == 0){
+			fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
 		      }
 		      else{
-			fprintf(Instruction, "iconst_%d", (strcmp("true",newID->value)==0?1:0));
+			fprintf(Instructions, "iconst_%d\n", (strcmp("true",newID->value)==0?1:0));
 		      }
 		    }
 		    else{
-		      fprintf(Instruction, "iload %d", newID->stkIndex);
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
 		    }
 		  }
 		}
@@ -1009,6 +1007,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		|
 		NUMBER
 		{
+		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		  $$ = $1;
 		  nowType = 0;
 		}
@@ -1091,11 +1090,13 @@ boolean_expr:	boolean_expr AND boolean_expr
 		TRUE
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "iconst_1\n");
 		}
 		|
 		FALSE		
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "iconst_0\n");
 		}
 		|
 		IDENTIFIER

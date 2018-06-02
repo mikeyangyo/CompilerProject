@@ -1034,10 +1034,10 @@ integer_expr:	integer_expr PLUS integer_expr
 		  }
 		  else{
 		    if(strcmp(newID->type,"int")==0||strcmp(newID->type,"nint")==0){
-		      fprintf(Instructions, "iload %d\n", *(int*)newID->value);
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
 		    }
 		    else if(strcmp(newID->type,"bool")==0||strcmp(newID->type,"nbool")==0){
-		      fprintf(Instructions, "iload %d\n", (strcmp(newID->value,"true")==0?1:0));
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
 		    }
 		  }
 		}
@@ -1210,7 +1210,7 @@ constant_expr:	NUMBER
 
 IDstk *SymbolTables = NULL;
 int nowType = -1;
-int nowStkIndex = 1;
+int nowStkIndex = 0;
 FILE *Instructions;
 
 yyerror(msg)

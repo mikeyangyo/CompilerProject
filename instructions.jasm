@@ -29,6 +29,7 @@ istore 0
 goto Lbegin
 Lexit:
 getstatic java.io.PrintStream java.lang.System.out
+ldc "Result of computation: "
 invokevirtual void java.io.PrintStream.print(java.lang.String)
 getstatic java.io.PrintStream java.lang.System.out
 iload 0

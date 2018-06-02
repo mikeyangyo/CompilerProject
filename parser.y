@@ -1158,27 +1158,21 @@ func_invoke_arg:func_invoke_arg COMMA expr
 
 conditional:	IF PARENTHESESL boolean_expr PARENTHESESR
 		{
-		  printf("1\n");
+		  fprintf(Instructions, "ifeq Lfalse\n");
 		}
 		block
 		{
-		  printf("2\n");
+		  fprintf(Instructions, "goto Lexit\nLfalse:\n");
 		}
-		|
-		IF PARENTHESESL boolean_expr PARENTHESESR
+		conditional_else
 		{
-		  printf("3\n");
-		}
-		block
-		{
-		  printf("4\n");
-		}
-		ELSE block
-		{
-  		  printf("5\n");
+  		  fprintf(Instructions, "Lexit:\n");
 		}
 		;
 
+conditional_else:ELSE block
+		|
+		;
 
 loop:		WHILE
 		{
@@ -1233,6 +1227,7 @@ constant_expr:	NUMBER
 		{
 		  $$ = $1;
 		  nowType = 2;
+		  fprintf(Instructions, "ldc \"%s\"\n", $1);
 		}
 		|
 		FALSE

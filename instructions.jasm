@@ -12,6 +12,16 @@ istore 2
 sipush 1
 istore 3
 sipush 55
+putstatic int project3.a
 iconst_0
+istore 3
 sipush 1
+istore 0
 iconst_0
+putstatic int project3.e
+getstatic java.io.PrintStream java.lang.System.out
+sipush 55
+invokevirtual void java.io.PrintStream.print(java.lang.String)
+getstatic java.io.PrintStream java.lang.System.out
+sipush 1
+invokevirtual void java.io.PrintStream.println(java.lang.String)

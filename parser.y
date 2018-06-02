@@ -1168,14 +1168,33 @@ func_invoke_arg:func_invoke_arg COMMA expr
 		expr
 		;
 
-conditional:	IF PARENTHESESL boolean_expr PARENTHESESR block ELSE block
+conditional:	IF PARENTHESESL boolean_expr
 		{
-		  Trace("Reducing to conditional statement w/ else\n");
+		  fprintf(Instructions, "ifeq Lfalse\n");
 		}
-		|
-		IF PARENTHESESL boolean_expr PARENTHESESR block
+		conditional_else
+		;
+
+conditional_else:PARENTHESESR
+		{
+		  fprintf(Instructions, "Lfalse:\n");
+		}
+		block
 		{
 		  Trace("Reducing to conditional statement w/ no else\n");
+		  fprintf(Instructions, "goto Lexit\n");
+  		  fprintf(Instructions, "Lexit:\n");
+		}
+		|
+		PARENTHESESR block ELSE
+		{
+  		  fprintf(Instructions, "goto Lexit\n");
+  		  fprintf(Instructions, "Lfalse:\n");
+		}
+		block
+		{
+		  Trace("Reducing to conditional statement w/ else\n");
+  		  fprintf(Instructions, "Lexit:\n");
 		}
 		;
 

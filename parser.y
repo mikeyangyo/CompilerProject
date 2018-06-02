@@ -947,6 +947,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) + atof($3)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "iadd\n");
 		}
 		|
 		integer_expr MINUS integer_expr
@@ -960,6 +961,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) - atof($3)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "isub\n");
 		}
 		|
 		integer_expr MULTIPLY integer_expr
@@ -973,6 +975,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) * atof($3)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "imul\n");
 		}
 		|
 		integer_expr DIVIDE integer_expr
@@ -985,6 +988,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) / atof($3)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "idiv\n");
 		}
 		|
 		MINUS integer_expr %prec UMINUS
@@ -998,6 +1002,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (float)((atof($2) * -1)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "ineg\n");
 		}
 		|
 		NUMBER
@@ -1005,6 +1010,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		  $$ = $1;
 		  nowType = 0;
+		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		}
 		|
 		REALNUMBER
@@ -1014,6 +1020,27 @@ integer_expr:	integer_expr PLUS integer_expr
 		}
 		|
 		IDENTIFIER
+		{
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  if(newID == NULL){
+		    newID = Search(SymbolTables->table, $1);
+		    if(newID == NULL){
+		      printf("Error: Undefined variable\n");
+		      exit(1);
+		    }
+		  }
+		  if(newID->globalORlocal == 0){
+  		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		  }
+		  else{
+		    if(strcmp(newID->type,"int")==0||strcmp(newID->type,"nint")==0){
+		      fprintf(Instructions, "iload %d\n", *(int*)newID->value);
+		    }
+		    else if(strcmp(newID->type,"bool")==0||strcmp(newID->type,"nbool")==0){
+		      fprintf(Instructions, "iload %d\n", (strcmp(newID->value,"true")==0?1:0));
+		    }
+		  }
+		}
 		;
 
 boolean_expr:	boolean_expr AND boolean_expr
@@ -1183,7 +1210,7 @@ constant_expr:	NUMBER
 
 IDstk *SymbolTables = NULL;
 int nowType = -1;
-int nowStkIndex = 0;
+int nowStkIndex = 1;
 FILE *Instructions;
 
 yyerror(msg)

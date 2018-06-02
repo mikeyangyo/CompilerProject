@@ -199,3 +199,21 @@ void stkInsert(IDstk *givenSTK, IDstk *newTable){
   IDstk *nowtop = Top(givenSTK);
   nowtop->next = newTable;
 }
+
+ID* stkSearch(IDstk *givenSTK, ID *nowID){
+  IDstk *current = givenSTK;
+  ID *result = NULL;
+  while(current->next != NULL){
+    ID *existed = Search(current->table, nowID);
+    if(existed != NULL){
+      result = existed;
+    }
+    current = current->next;
+  }
+  existed = Search(current->table, nowID);
+  if(existed != NULL){
+    result = existed;
+  }
+  return result;
+}
+

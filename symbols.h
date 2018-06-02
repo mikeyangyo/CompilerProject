@@ -37,5 +37,5 @@ void Pop(IDstk *givenSTK);
 // insert the table into stk
 void stkInsert(IDstk *givenSTK, IDstk *newTable);
 // search the variable in stk
-int stkSearch(IDstk *givenSTK, char *name);
+ID* stkSearch(IDstk *givenSTK, char *name);
 #endif

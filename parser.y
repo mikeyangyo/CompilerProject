@@ -748,13 +748,10 @@ stmts:		stmts simple_stmt SEMICOLON
 simple_stmt:	IDENTIFIER ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  ID *newID = stkSearch(SymbolTables, $1);
 		  if(newID == NULL){
-		    newID = Search(SymbolTables->table, $1);
-		    if(newID == NULL){
-		      printf("Error: Undefined variable\n");
-		      exit(1);
-		    }
+		    printf("Error: Undefined variable\n");
+		    exit(1);
 		  }
 		  if(newID->globalORlocal == 1){
 		    fprintf(Instructions, "istore %d\n", newID->stkIndex);
@@ -867,12 +864,10 @@ expr:		integer_expr
 		IDENTIFIER
 		{
 		  Trace("Reducing to expression1\n");
-		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  ID *newID = stkSearch(SymbolTables, $1);
 		  if(newID == NULL){
-		    newID = Search(SymbolTables->table, $1);
-		    if(newID == NULL){
-		      printf("Error: Undefined variable\n");
-		    }
+		    printf("Error: Undefined variable\n");
+		    exit(1);
 		  }
 		  if(newID->type == NULL){
 		    $$ = strdup("0");
@@ -1000,13 +995,10 @@ integer_expr:	integer_expr PLUS integer_expr
 		|
 		IDENTIFIER
 		{
-		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  ID *newID = stkSearch(SymbolTables, $1);
 		  if(newID == NULL){
-		    newID = Search(SymbolTables->table, $1);
-		    if(newID == NULL){
-		      printf("Error: Undefined variable\n");
-		      exit(1);
-		    }
+		    printf("Error: Undefined variable\n");
+		    exit(1);
 		  }
 		  if(newID->globalORlocal == 0){
   		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
@@ -1118,11 +1110,8 @@ boolean_expr:	boolean_expr AND boolean_expr
 		  printf("Reducing to boolean expression\n");
 		  ID *newID = stkSearch(SymbolTables, $1);
 		  if(newID == NULL){
-		    newID = Search(SymbolTables->table, $1);
-		    if(newID == NULL){
-		      printf("Error: Undefined variable\n");
-		      exit(1);
-		    }
+		    printf("Error: Undefined variable\n");
+		    exit(1);
 		  }
 		  if(newID->globalORlocal == 0){
   		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);

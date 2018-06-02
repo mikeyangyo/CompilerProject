@@ -203,8 +203,9 @@ void stkInsert(IDstk *givenSTK, IDstk *newTable){
 ID* stkSearch(IDstk *givenSTK, char *name){
   IDstk *current = givenSTK;
   ID *result = NULL;
+  ID *existed;
   while(current->next != NULL){
-    ID *existed = Search(current->table, name);
+    existed = Search(current->table, name);
     if(existed != NULL){
       result = existed;
     }

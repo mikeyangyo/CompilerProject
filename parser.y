@@ -1116,7 +1116,7 @@ boolean_expr:	boolean_expr AND boolean_expr
 		IDENTIFIER
 		{
 		  printf("Reducing to boolean expression\n");
-		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  ID *newID = stkSearch(SymbolTables, $1);
 		  if(newID == NULL){
 		    newID = Search(SymbolTables->table, $1);
 		    if(newID == NULL){

@@ -755,6 +755,14 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
+
+		  if(newID->globalORlocal != 0){
+		    fprintf(Instructions, "istore %d\n", newID->stkIndex);
+		  }
+		  else{
+		    fprintf(Instructions, "putstatic int project3.%s\n", newID->name);
+		  }
+
 		  if(newID == NULL){
 		    printf("Error: Undefined variable\n");
 		  }
@@ -808,32 +816,24 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		  Trace("Reducing to simple statement\n");
 		}
 		|
-		PRINT expr
+		PRINT
+		{
+  		  fprintf(Instrcutions, "getstatic java.io.PrintStream java.lang.System.out\n");
+		}
+		expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  if(nowType == 0){
-		    printf("%d", atoi($2));
-		  }
-		  else if(nowType == 1){
-		    printf("%f", atof($2));
-		  }
-		  else{
-		    printf("%s", $2);
-		  }
+		  fprintf(Instrcutions, "invokevirtual void java.io.PrintStream.print(java.lang.String)\n");
 		}
 		|
-		PRINTLN expr
+		PRINTLN
+		{
+  		  fprintf(Instrcutions, "getstatic java.io.PrintStream java.lang.System.out\n");
+		}
+		expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  if(nowType == 0){
-		    printf("%d\n", atoi($2));
-		  }
-		  else if(nowType == 1){
-		    printf("%f\n", atof($2));
-		  }
-		  else{
-		    printf("%s\n", $2);
-		  }
+		  fprintf(Instrcutions, "invokevirtual void java.io.PrintStream.println(java.lang.String)\n");
 		}
 		|
 		READ IDENTIFIER

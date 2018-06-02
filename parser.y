@@ -866,7 +866,7 @@ expr:		integer_expr
 		|
 		IDENTIFIER
 		{
-		  Trace("Reducing to expression\n");
+		  Trace("Reducing to expression1\n");
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
 		  if(newID == NULL){
 		    newID = Search(SymbolTables->table, $1);
@@ -898,30 +898,10 @@ expr:		integer_expr
 		    printf("Error: Can't print type %s variable\n", newID->type);
 		  }
 		  if(newID->globalORlocal == 0){
-		    if(newID->value != NULL){
-		      if(strcmp(newID->type, "int") == 0 || strcmp(newID->type, "nint") == 0){
-			fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
-		      }
-		      else{
-			fprintf(Instructions, "iconst_%d\n", (strcmp("true",newID->value)==0?1:0));
-		      }
-		    }
-		    else{
-		      fprintf(Instructions, "getstatic int project3.%s\n", $1);
-		    }
+		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
 		  }
 		  else{
-		    if(newID->value != NULL){
-		      if(strcmp(newID->type, "int") == 0 || strcmp(newID->type, "nint") == 0){
-			fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
-		      }
-		      else{
-			fprintf(Instructions, "iconst_%d\n", (strcmp("true",newID->value)==0?1:0));
-		      }
-		    }
-		    else{
-		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
-		    }
+		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
 		  }
 		}
 		|
@@ -1054,6 +1034,7 @@ boolean_expr:	boolean_expr AND boolean_expr
 		  printf("Reducing to boolean expression\n");
 		  fprintf(Instructions, "ixor\n");
 		}
+		|
 		boolean_expr LESST boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");

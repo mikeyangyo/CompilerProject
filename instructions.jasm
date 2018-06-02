@@ -1,18 +1,35 @@
-field static integer a = 1
-field static integer b = 1
-field static integer e = 2
-field static integer f = 0
-field static integer g
-sipush 2
+sipush 8
 istore 0
-getstatic int project3.a
+sipush 1
+istore 1
+sipush 1
+istore 2
+Lbegin:
 iload 0
+sipush 2
 isub
-iflt L1
+ifgt L1
 iconst_0
 goto L2
 L1: iconst_1
 L2:
+ifeg Lexit
+iload 1
+istore 3
+iload 1
+iload 2
+iadd
+istore 1
+iload 3
+istore 2
+iload 0
+sipush 1
+isub
+istore 0
+goto Lbegin
+Lexit:
 getstatic java.io.PrintStream java.lang.System.out
-getstatic int project3.a
 invokevirtual void java.io.PrintStream.print(java.lang.String)
+getstatic java.io.PrintStream java.lang.System.out
+iload 0
+invokevirtual void java.io.PrintStream.println(java.lang.String)

@@ -748,13 +748,10 @@ stmts:		stmts simple_stmt SEMICOLON
 simple_stmt:	IDENTIFIER ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  ID *newID = stkSearch(SymbolTables, $1);
 		  if(newID == NULL){
-		    newID = Search(SymbolTables->table, $1);
-		    if(newID == NULL){
-		      printf("Error: Undefined variable\n");
-		      exit(1);
-		    }
+		    printf("Error: Undefined variable\n");
+		    exit(1);
 		  }
 		  if(newID->globalORlocal == 1){
 		    fprintf(Instructions, "istore %d\n", newID->stkIndex);
@@ -867,12 +864,10 @@ expr:		integer_expr
 		IDENTIFIER
 		{
 		  Trace("Reducing to expression1\n");
-		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  ID *newID = stkSearch(SymbolTables, $1);
 		  if(newID == NULL){
-		    newID = Search(SymbolTables->table, $1);
-		    if(newID == NULL){
-		      printf("Error: Undefined variable\n");
-		    }
+		    printf("Error: Undefined variable\n");
+		    exit(1);
 		  }
 		  if(newID->type == NULL){
 		    $$ = strdup("0");
@@ -1000,13 +995,10 @@ integer_expr:	integer_expr PLUS integer_expr
 		|
 		IDENTIFIER
 		{
-		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  ID *newID = stkSearch(SymbolTables, $1);
 		  if(newID == NULL){
-		    newID = Search(SymbolTables->table, $1);
-		    if(newID == NULL){
-		      printf("Error: Undefined variable\n");
-		      exit(1);
-		    }
+		    printf("Error: Undefined variable\n");
+		    exit(1);
 		  }
 		  if(newID->globalORlocal == 0){
   		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
@@ -1116,13 +1108,10 @@ boolean_expr:	boolean_expr AND boolean_expr
 		IDENTIFIER
 		{
 		  printf("Reducing to boolean expression\n");
-		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  ID *newID = stkSearch(SymbolTables, $1);
 		  if(newID == NULL){
-		    newID = Search(SymbolTables->table, $1);
-		    if(newID == NULL){
-		      printf("Error: Undefined variable\n");
-		      exit(1);
-		    }
+		    printf("Error: Undefined variable\n");
+		    exit(1);
 		  }
 		  if(newID->globalORlocal == 0){
   		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
@@ -1169,6 +1158,15 @@ func_invoke_arg:func_invoke_arg COMMA expr
 
 conditional:	IF PARENTHESESL boolean_expr PARENTHESESR
 		{
+		  printf("1\n");
+		}
+		block
+		{
+		  printf("2\n");
+		}
+		|
+		IF PARENTHESESL boolean_expr PARENTHESESR
+		{
 		  printf("3\n");
 		}
 		block
@@ -1179,21 +1177,22 @@ conditional:	IF PARENTHESESL boolean_expr PARENTHESESR
 		{
   		  printf("5\n");
 		}
-		|
-		IF PARENTHESESL boolean_expr PARENTHESESR
-		{
-		  printf("1\n");
-		}
-		block
-		{
-		  printf("2\n");
-		}
 		;
 
 
-loop:		WHILE PARENTHESESL boolean_expr PARENTHESESR block
+loop:		WHILE
+		{
+		  fprintf(Instructions, "Lbegin:\n");
+		}
+		PARENTHESESL boolean_expr PARENTHESESR
+		{
+		  fprintf(Instructions, "ifeg Lexit\n");
+		}
+		block
 		{
 		  Trace("Reducing to loop\n");
+		  fprintf(Instructions, "goto Lbegin\n");
+		  fprintf(Instructions, "Lexit:\n");
 		}
 		;
 

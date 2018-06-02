@@ -716,12 +716,12 @@ stmts:		stmts simple_stmt SEMICOLON
 		|
 		stmts conditional
 		{
-		  Trace("Reducing to statements\n");
+		  Trace("Reducing to statements1\n");
 		}
 		|
 		conditional
 		{
-		  Trace("Reducing to statements\n");
+		  Trace("Reducing to statements2\n");
 		}
 		|
 		stmts loop
@@ -1116,7 +1116,6 @@ boolean_expr:	boolean_expr AND boolean_expr
 		IDENTIFIER
 		{
 		  printf("Reducing to boolean expression\n");
-
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
 		  if(newID == NULL){
 		    newID = Search(SymbolTables->table, $1);
@@ -1168,35 +1167,29 @@ func_invoke_arg:func_invoke_arg COMMA expr
 		expr
 		;
 
-conditional:	IF PARENTHESESL boolean_expr
+conditional:	IF PARENTHESESL boolean_expr PARENTHESESR
 		{
-		  fprintf(Instructions, "ifeq Lfalse\n");
-		}
-		conditional_else
-		;
-
-conditional_else:PARENTHESESR
-		{
-		  fprintf(Instructions, "Lfalse:\n");
+		  printf("3\n");
 		}
 		block
 		{
-		  Trace("Reducing to conditional statement w/ no else\n");
-		  fprintf(Instructions, "goto Lexit\n");
-  		  fprintf(Instructions, "Lexit:\n");
+		  printf("4\n");
+		}
+		ELSE block
+		{
+  		  printf("5\n");
 		}
 		|
-		PARENTHESESR block ELSE
+		IF PARENTHESESL boolean_expr PARENTHESESR
 		{
-  		  fprintf(Instructions, "goto Lexit\n");
-  		  fprintf(Instructions, "Lfalse:\n");
+		  printf("1\n");
 		}
 		block
 		{
-		  Trace("Reducing to conditional statement w/ else\n");
-  		  fprintf(Instructions, "Lexit:\n");
+		  printf("2\n");
 		}
 		;
+
 
 loop:		WHILE PARENTHESESL boolean_expr PARENTHESESR block
 		{

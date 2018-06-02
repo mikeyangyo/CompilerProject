@@ -13,7 +13,6 @@ iconst_0
 goto L2
 L1: iconst_1
 L2:
-ifeq Lfalse
 getstatic java.io.PrintStream java.lang.System.out
 getstatic int project3.a
 invokevirtual void java.io.PrintStream.print(java.lang.String)

@@ -689,12 +689,6 @@ block:		cl normal_declars stmts CBRACKETSR
 
 cl:		CBRACKETSL
 		{
-		  // create new table
-		  /*char *tableName = strdup("Table ");
-		  char *name = (char*)malloc(sizeof(char));
-		  sprintf(name, "%d", nowTableName);
-		  nowTableName++;
-		  strcat(tableName, name);*/
 		  IDstk *newTable = stkCreate();
 		  stkInsert(SymbolTables, newTable);
 		}
@@ -756,50 +750,58 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		  Trace("Reducing to simple statement\n");
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
 		  if(newID == NULL){
-		    printf("Error: Undefined variable\n");
-		  }
-		  else{
-		    switch(nowType){
-		      case 0:
-		        if(newID->type == NULL || strcmp("int", newID->type) == 0 || strcmp("nint", newID->type) == 0){
-			  int* temp = (int*)malloc(sizeof(int));
-			  *temp = atoi($3);
-			  newID->value = (void*)temp;
-			}
-			else{
-			  printf("Error: Unsuitable type\n");
-			}
-		        break;
-		      case 1:
-		        if(newID->type == NULL || strcmp("float", newID->type) == 0 || strcmp("nfloat", newID->type) == 0){
-			  float* temp = (float*)malloc(sizeof(float));
-			  *temp = atof($3);
-			  newID->value = (void*)temp;
-			}
-			else{
-			  printf("Error: Unsuitable type\n");
-			}
-		        break;
-		      case 2:
-		        if(newID->type == NULL || strcmp("str", newID->type) == 0 || strcmp("nstr", newID->type) == 0){
-			  newID->value = (void*)$3;
-			}
-			else{
-			  printf("Error: Unsuitable type\n");
-			}
-		        break;
-		      case 3:
-		        if(newID->type == NULL || strcmp("bool", newID->type) == 0 || strcmp("nbool", newID->type) == 0){
-			  newID->value = (void*)$3;
-			}
-			else{
-			  printf("Error: Unsuitable type\n");
-			}
-		        break;
-		      default:
-			printf("Error: Undefined type\n");
-		        break;
+		    newID = Search(SymbolTables->table, $1);
+		    if(newID == NULL){
+		      printf("Error: Undefined variable\n");
+		      exit(1);
 		    }
+		  }
+		  if(newID->globalORlocal == 1){
+		    fprintf(Instructions, "istore %d\n", newID->stkIndex);
+		  }
+		  else if(newID->globalORlocal == 0){
+		    fprintf(Instructions, "putstatic int project3.%s\n", newID->name);
+		  }
+		  switch(nowType){
+		    case 0:
+		      if(newID->type == NULL || strcmp("int", newID->type) == 0 || strcmp("nint", newID->type) == 0){
+			int* temp = (int*)malloc(sizeof(int));
+			*temp = atoi($3);
+			newID->value = (void*)temp;
+		      }
+		      else{
+			printf("Error: Unsuitable type\n");
+		      }
+		      break;
+		    case 1:
+		      if(newID->type == NULL || strcmp("float", newID->type) == 0 || strcmp("nfloat", newID->type) == 0){
+			float* temp = (float*)malloc(sizeof(float));
+			*temp = atof($3);
+			newID->value = (void*)temp;
+		      }
+		      else{
+			printf("Error: Unsuitable type\n");
+		      }
+		      break;
+		    case 2:
+		      if(newID->type == NULL || strcmp("str", newID->type) == 0 || strcmp("nstr", newID->type) == 0){
+			newID->value = (void*)$3;
+		      }
+		      else{
+			printf("Error: Unsuitable type\n");
+		      }
+		      break;
+		    case 3:
+		      if(newID->type == NULL || strcmp("bool", newID->type) == 0 || strcmp("nbool", newID->type) == 0){
+			newID->value = (void*)$3;
+		      }
+		      else{
+			printf("Error: Unsuitable type\n");
+		      }
+		      break;
+		    default:
+		      printf("Error: Undefined type\n");
+		      break;
 		  }
 		}
 		|
@@ -808,32 +810,24 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		  Trace("Reducing to simple statement\n");
 		}
 		|
-		PRINT expr
+		PRINT
+		{
+  		  fprintf(Instructions, "getstatic java.io.PrintStream java.lang.System.out\n");
+		}
+		expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  if(nowType == 0){
-		    printf("%d", atoi($2));
-		  }
-		  else if(nowType == 1){
-		    printf("%f", atof($2));
-		  }
-		  else{
-		    printf("%s", $2);
-		  }
+		  fprintf(Instructions, "invokevirtual void java.io.PrintStream.print(java.lang.String)\n");
 		}
 		|
-		PRINTLN expr
+		PRINTLN
+		{
+  		  fprintf(Instructions, "getstatic java.io.PrintStream java.lang.System.out\n");
+		}
+		expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  if(nowType == 0){
-		    printf("%d\n", atoi($2));
-		  }
-		  else if(nowType == 1){
-		    printf("%f\n", atof($2));
-		  }
-		  else{
-		    printf("%s\n", $2);
-		  }
+		  fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(java.lang.String)\n");
 		}
 		|
 		READ IDENTIFIER
@@ -875,32 +869,33 @@ expr:		integer_expr
 		  Trace("Reducing to expression\n");
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
 		  if(newID == NULL){
-		    printf("Error: Undefined variable\n");
+		    newID = Search(SymbolTables->table, $1);
+		    if(newID == NULL){
+		      printf("Error: Undefined variable\n");
+		    }
+		  }
+		  if(newID->type == NULL){
+		    $$ = strdup("0");
+		    nowType = 0;
+		  }
+		  else if(strcmp(newID->type, "int") == 0 ||strcmp(newID->type, "nint") == 0){
+		    sprintf($$, "%d", *(int*)newID->value);
+		    nowType = 0;
+		  }
+		  else if(strcmp(newID->type, "float") == 0 ||strcmp(newID->type, "nfloat") == 0){
+		    sprintf($$, "%f", *(float*)newID->value);
+		    nowType = 1;
+		  }
+		  else if(strcmp(newID->type, "str") == 0 ||strcmp(newID->type, "nstr") == 0){
+		    $$ = (char*)newID->value;
+		    nowType = 2;
+		  }
+		  else if(strcmp(newID->type, "bool") == 0 ||strcmp(newID->type, "nbool") == 0){
+		    $$ = (char*)newID->value;
+		    nowType = 3;
 		  }
 		  else{
-		    if(newID->type == NULL){
-		      $$ = strdup("0");
-		      nowType = 0;
-		    }
-		    else if(strcmp(newID->type, "int") == 0 ||strcmp(newID->type, "nint") == 0){
-		      sprintf($$, "%d", *(int*)newID->value);
-		      nowType = 0;
-		    }
-		    else if(strcmp(newID->type, "float") == 0 ||strcmp(newID->type, "nfloat") == 0){
-		      sprintf($$, "%f", *(float*)newID->value);
-		      nowType = 1;
-		    }
-		    else if(strcmp(newID->type, "str") == 0 ||strcmp(newID->type, "nstr") == 0){
-		      $$ = (char*)newID->value;
-		      nowType = 2;
-		    }
-		    else if(strcmp(newID->type, "bool") == 0 ||strcmp(newID->type, "nbool") == 0){
-		      $$ = (char*)newID->value;
-		      nowType = 3;
-		    }
-		    else{
-		      printf("Error: Can't print type %s variable\n", newID->type);
-		    }
+		    printf("Error: Can't print type %s variable\n", newID->type);
 		  }
 		  if(newID->globalORlocal == 0){
 		    if(newID->value != NULL){
@@ -952,6 +947,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) + atof($3)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "iadd\n");
 		}
 		|
 		integer_expr MINUS integer_expr
@@ -965,6 +961,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) - atof($3)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "isub\n");
 		}
 		|
 		integer_expr MULTIPLY integer_expr
@@ -978,6 +975,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) * atof($3)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "imul\n");
 		}
 		|
 		integer_expr DIVIDE integer_expr
@@ -990,6 +988,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) / atof($3)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "idiv\n");
 		}
 		|
 		MINUS integer_expr %prec UMINUS
@@ -1003,6 +1002,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (float)((atof($2) * -1)));
 		    nowType = 1;
 		  }
+		  fprintf(Instructions, "ineg\n");
 		}
 		|
 		NUMBER
@@ -1010,6 +1010,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		  $$ = $1;
 		  nowType = 0;
+		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		}
 		|
 		REALNUMBER
@@ -1020,26 +1021,25 @@ integer_expr:	integer_expr PLUS integer_expr
 		|
 		IDENTIFIER
 		{
-		  /*printf("%s\n", $1);
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
 		  if(newID == NULL){
-			  if(newID->type == "int" ||newID->type == "nint"){
-			    sprintf($$, "%d", *(int*)newID->value);
-			    nowType = 0;
-			  }
-			  else if(newID->type == "float" || newID->type == "nfloat"){
-			    sprintf($$, "%f", *(float*)newID->value);
-			    nowType = 0;
-			  }
-			  else{
-			    printf("Error: the type is not a real number\n");
-			  }
+		    newID = Search(SymbolTables->table, $1);
+		    if(newID == NULL){
+		      printf("Error: Undefined variable\n");
+		      exit(1);
+		    }
+		  }
+		  if(newID->globalORlocal == 0){
+  		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
 		  }
 		  else{
-		    printf("Error: %s doesn't exist\n", $1);
-		    $$ = strdup("0");
+		    if(strcmp(newID->type,"int")==0||strcmp(newID->type,"nint")==0){
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    }
+		    else if(strcmp(newID->type,"bool")==0||strcmp(newID->type,"nbool")==0){
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    }
 		  }
-*/
 		}
 		;
 
@@ -1230,12 +1230,6 @@ main(int argc, char **argv)
     }
     yyin = fopen(argv[1], "r");         /* open input file */
 
-    // create new table
-    //char *tableName = strdup("Global");
-    /*char *name = (char*)malloc(sizeof(char));
-    sprintf(name, "%d", nowTableName);
-    nowTableName++;*/
-    //strcat(tableName, "table");
     SymbolTables = stkCreate();
 
 

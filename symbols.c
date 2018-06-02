@@ -25,6 +25,7 @@ int Insert(ID *givenList, ID *newID){
     current->value = newID->value;
     current->stkIndex = newID->stkIndex;
     current->next = newID->next;
+    current->globalORlocal = newID->globalORlocal;
     return 0;
   }
   while(current->next != NULL){

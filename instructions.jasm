@@ -1,17 +1,29 @@
-field static integer a = 3
+field static integer a = 1
 field static integer b = 1
-field static integer e = 44
+field static integer e = 2
 field static integer f = 0
 field static integer g
-sipush 55
+sipush 3
 istore 0
 sipush 0
 istore 1
-sipush 66
+sipush 4
 istore 2
 sipush 1
 istore 3
-sipush 55
-iconst_0
-sipush 1
-iconst_0
+getstatic int project3.a
+getstatic int project3.e
+iadd
+istore 1
+getstatic int project3.e
+iload 0
+imul
+putstatic int project3.b
+getstatic int project3.e
+getstatic int project3.a
+idiv
+istore 3
+getstatic int project3.e
+getstatic int project3.a
+isub
+istore 3

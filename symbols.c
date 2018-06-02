@@ -205,12 +205,14 @@ ID* stkSearch(IDstk *givenSTK, char *name){
   ID *result = NULL;
   ID *existed;
   while(current->next != NULL){
+    printf("now seeking tablename = %d\n", current->tableName);
     existed = Search(current->table, name);
     if(existed != NULL){
       result = existed;
     }
     current = current->next;
   }
+  printf("now seeking tablename = %d\n", current->tableName);
   existed = Search(current->table, name);
   if(existed != NULL){
     result = existed;

@@ -604,72 +604,108 @@ array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA NUMBER SBRACKETSR
 		}
 		;
 
-func_declar:	FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR MINUS LARGERT type block
+func_declar:	FN
+		{
+		  fprintf(Instructions, "method public static");
+		}
+		func_body block
 		{
 		  Trace("Reducing to function declaration w/ arguments and return type\n");
-		  ID * newID = Search(Top(SymbolTables)->table, $2);
 
-		  if(newID == NULL){
-		    newID = CreateID($2);
-		    newID->type = strdup("Function_");
-		    strcat(newID->type, $8);
-		    Insert(Top(SymbolTables)->table, newID);
-		  }
-		  else{
-		    printf("%s already existed!\n", $2);
-		  }
+		  fprintf(Instructions, "}\n");
+		  inFuncBlock = 0;
 		}
+		;
+
+arguments:	func_argument
 		|
-		FN IDENTIFIER PARENTHESESL PARENTHESESR MINUS LARGERT type block
+		;
+
+func_body:	IDENTIFIER PARENTHESESL arguments PARENTHESESR MINUS LARGERT type 
 		{
-		  Trace("Reducing to function declaration w/ return type\n");
-		  ID * newID = Search(Top(SymbolTables)->table, $2);
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
 
 		  if(newID == NULL){
-		    newID = CreateID($2);
-		    newID->type = strdup("Function_");
-		    strcat(newID->type, $7);
-		    Insert(Top(SymbolTables)->table, newID);
-		  }
-		  else{
-		    printf("%s already existed!\n", $2);
-		  }
-		}
-		|
-		FN IDENTIFIER PARENTHESESL PARENTHESESR block
-		{
-		  Trace("Reducing to function declaration w/ no arguments and no return type\n");
-		  ID * newID = Search(Top(SymbolTables)->table, $2);
-
-		  if(newID == NULL){
-		    newID = CreateID($2);
+		    newID = CreateID($1);
 		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
 		  else{
-		    printf("%s already existed!\n", $2);
+		    printf("%s already existed!\n", $1);
 		  }
+
+		  if(argumentsStr == NULL){
+		    fprintf(Instructions, " %s %s ()\n", $7, $1);
+		  }
+		  else{
+		    fprintf(Instructions, " %s %s (%s)\n", $7, $1, argumentsStr);
+		  }
+		  fprintf(Instructions, "max_stack 15\n");
+		  fprintf(Instructions, "max_locals 15\n{\n");
+		  IDstk *newTable = stkCreate();
+		  stkInsert(SymbolTables, newTable);
+		  inFuncBlock = 1;
 		}
 		|
-		FN IDENTIFIER PARENTHESESL func_argument PARENTHESESR block
+		IDENTIFIER PARENTHESESL arguments PARENTHESESR
 		{
-		  Trace("Reducing to function declaration w/ arguments\n");
-		  ID * newID = Search(Top(SymbolTables)->table, $2);
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
 
 		  if(newID == NULL){
-		    newID = CreateID($2);
+		    newID = CreateID($1);
 		    newID->type = strdup("Function");
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
 		  else{
-		    printf("%s already existed!\n", $2);
+		    printf("%s already existed!\n", $1);
 		  }
+
+		  if(argumentsStr == NULL){
+		    fprintf(Instructions, " void %s()\n", $1);
+		  }
+		  else{
+		    fprintf(Instructions, " void %s(%s)\n", $1, argumentsStr);
+		  }
+		  fprintf(Instructions, "max_stack 15\n");
+		  fprintf(Instructions, "max_locals 15\n{\n");
+		  IDstk *newTable = stkCreate();
+		  printf("function table name = %d\n", newTable->tableName);
+		  stkInsert(SymbolTables, newTable);
+		  inFuncBlock = 1;
 		}
 		;
 
 func_argument:	func_argument COMMA IDENTIFIER COLON type
+		{
+		  ID *newID = Search(Top(SymbolTables)->table, $3);
+
+		  if(newID == NULL){
+		    newID = CreateID($3);
+		    newID->type = $5;
+		    newID->stkIndex = nowStkIndex;
+		    nowStkIndex++;
+		    newID->globalORlocal = 1;
+		    Insert(Top(SymbolTables)->table, newID);
+		  }
+
+		  strcat(argumentsStr, ", ");
+		  strcat(argumentsStr, $5);
+		}
 		|
 		IDENTIFIER COLON type
+		{
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  if(newID == NULL){
+		    newID = CreateID($1);
+		    newID->type = $3;
+		    newID->stkIndex = nowStkIndex;
+		    nowStkIndex++;
+		    newID->globalORlocal = 1;
+		    Insert(Top(SymbolTables)->table, newID);
+		  }
+
+		  argumentsStr = strdup($3);
+		}
 		;
 
 block:		cl normal_declars stmts CBRACKETSR
@@ -677,6 +713,7 @@ block:		cl normal_declars stmts CBRACKETSR
 		  Trace("Reducing to block w/ normal declaration and statements\n");
 		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
 		  Pop(SymbolTables);
+		  inFuncBlock = 0;
 		}
 		|
 		cl stmts CBRACKETSR
@@ -684,13 +721,17 @@ block:		cl normal_declars stmts CBRACKETSR
 		  Trace("Reducing to block w/ statements\n");
 		  Dump(Top(SymbolTables)->table, Top(SymbolTables)->tableName);
 		  Pop(SymbolTables);
+		  inFuncBlock = 0;
 		}
 		;
 
 cl:		CBRACKETSL
 		{
-		  IDstk *newTable = stkCreate();
-		  stkInsert(SymbolTables, newTable);
+		  if(inFuncBlock == 0){
+		    IDstk *newTable = stkCreate();
+		    stkInsert(SymbolTables, newTable);
+		  }
+		  inFuncBlock = 0;
 		}
 		;
 
@@ -835,11 +876,13 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		RETURN
 		{
 		  Trace("Reducing to simple statement\n");
+		  fprintf(Instructions, "return\n");
 		}
 		|
 		RETURN expr
 		{
 		  Trace("Reducing to simple statement\n");
+		  fprintf(Instructions, "ireturn\n");
 		}
 		;
 
@@ -1248,8 +1291,9 @@ constant_expr:	NUMBER
 IDstk *SymbolTables = NULL;
 int nowType = -1;
 int nowStkIndex = 0;
+int inFuncBlock = 0;
 FILE *Instructions;
-
+char *argumentsStr = NULL;
 yyerror(msg)
 char *msg;
 {

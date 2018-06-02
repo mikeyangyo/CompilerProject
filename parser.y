@@ -1169,6 +1169,15 @@ func_invoke_arg:func_invoke_arg COMMA expr
 
 conditional:	IF PARENTHESESL boolean_expr PARENTHESESR
 		{
+		  printf("1\n");
+		}
+		block
+		{
+		  printf("2\n");
+		}
+		|
+		IF PARENTHESESL boolean_expr PARENTHESESR
+		{
 		  printf("3\n");
 		}
 		block
@@ -1179,21 +1188,22 @@ conditional:	IF PARENTHESESL boolean_expr PARENTHESESR
 		{
   		  printf("5\n");
 		}
-		|
-		IF PARENTHESESL boolean_expr PARENTHESESR
-		{
-		  printf("1\n");
-		}
-		block
-		{
-		  printf("2\n");
-		}
 		;
 
 
-loop:		WHILE PARENTHESESL boolean_expr PARENTHESESR block
+loop:		WHILE
+		{
+		  fprintf(Instructions, "Lbegin:\n");
+		}
+		PARENTHESESL boolean_expr PARENTHESESR
+		{
+		  fprintf(Instructions, "ifeg Lexit\n");
+		}
+		block
 		{
 		  Trace("Reducing to loop\n");
+		  fprintf(Instructions, "goto Lbegin\n");
+		  fprintf(Instructions, "Lexit:\n");
 		}
 		;
 

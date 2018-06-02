@@ -9,6 +9,8 @@ ID* CreateID(char *newName){
   newID->stkIndex = -1;
   newID->globalORlocal = -1;
   newID->next = NULL;
+  newID->argumentsTypeList = NULL;
+  newID->returnType = NULL;
   return newID;
 }
 
@@ -26,6 +28,8 @@ int Insert(ID *givenList, ID *newID){
     current->stkIndex = newID->stkIndex;
     current->next = newID->next;
     current->globalORlocal = newID->globalORlocal;
+    current->argumentsTypeList = newID->argumentsTypeList;
+    current->returnType = newID->returnType;
     return 0;
   }
   while(current->next != NULL){

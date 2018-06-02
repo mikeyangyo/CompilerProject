@@ -172,7 +172,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        nowType = -1;
 
 			if(Top(SymbolTables)->tableName == 1){
-			  fprintf(Instructions, "field static integer %s = %s\n", $2, $6);
+			  fprintf(Instructions, "field static int %s = %s\n", $2, $6);
 			  newID->globalORlocal = 0;
 			}
 			else{
@@ -225,7 +225,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        nowType = -1;
 
 			if(Top(SymbolTables)->tableName == 1){
-			  fprintf(Instructions, "field static integer %s = %d\n", $2, (strcmp($6, "true")==0?1:0));
+			  fprintf(Instructions, "field static int %s = %d\n", $2, (strcmp($6, "true")==0?1:0));
 			  newID->globalORlocal = 0;
 			}
 			else{
@@ -264,7 +264,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			fprintf(Instructions, "field static integer %s = %s\n", $2, $4);
+			fprintf(Instructions, "field static int %s = %s\n", $2, $4);
 			newID->globalORlocal = 0;
 		      }
 		      else{
@@ -302,7 +302,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			fprintf(Instructions, "field static integer %s = %d\n", $2, ((strcmp($4,"true")==0)?1:0));
+			fprintf(Instructions, "field static int %s = %d\n", $2, ((strcmp($4,"true")==0)?1:0));
 			newID->globalORlocal = 0;
 		      }
 		      else{
@@ -350,7 +350,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			fprintf(Instructions, "field static integer %s = %s\n", $3, $7);
+			fprintf(Instructions, "field static int %s = %s\n", $3, $7);
 			newID->globalORlocal = 0;
 		      }
 		      else{
@@ -409,7 +409,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			fprintf(Instructions, "field static integer %s = %d\n", $3, (strcmp($7, "true")==0?1:0));
+			fprintf(Instructions, "field static int %s = %d\n", $3, (strcmp($7, "true")==0?1:0));
 			newID->globalORlocal = 0;
 		      }
 		      else{
@@ -458,7 +458,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		  }
 
 		  if(Top(SymbolTables)->tableName == 1){
-		    fprintf(Instructions, "field static integer %s\n", $3);
+		    fprintf(Instructions, "field static int %s\n", $3);
 		    newID->globalORlocal = 0;
 		  }
 		  else{
@@ -491,7 +491,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    nowType = -1;
 
 		    if(Top(SymbolTables)->tableName == 1){
-		      fprintf(Instructions, "field static integer %s = %s\n", $3, $5);
+		      fprintf(Instructions, "field static int %s = %s\n", $3, $5);
 		      newID->globalORlocal = 0;
 		    }
 		    else{
@@ -535,7 +535,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    nowType = -1;
 
 		    if(Top(SymbolTables)->tableName == 1){
-		      fprintf(Instructions, "field static integer %s = %d\n", $3, (strcmp($5, "true")==0?1:0));
+		      fprintf(Instructions, "field static int %s = %d\n", $3, (strcmp($5, "true")==0?1:0));
 		      newID->globalORlocal = 0;
 		    }
 		    else{
@@ -563,7 +563,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    ID *newID = CreateID($3);
 
 		    if(Top(SymbolTables)->tableName == 1){
-		      fprintf(Instructions, "field static integer %s\n", $3);
+		      fprintf(Instructions, "field static int %s\n", $3);
 		      newID->globalORlocal = 0;
 		    }
 		    else{
@@ -607,13 +607,20 @@ array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA NUMBER SBRACKETSR
 func_declar:	FN
 		{
 		  fprintf(Instructions, "method public static");
+		  IDstk *newTable = stkCreate();
+		  stkInsert(SymbolTables, newTable);
+		  inFuncBlock = 1;
 		}
 		func_body block
 		{
 		  Trace("Reducing to function declaration w/ arguments and return type\n");
-
+		  if(returned == 0){
+     		    fprintf(Instructions, "return\n");
+		  }
 		  fprintf(Instructions, "}\n");
 		  inFuncBlock = 0;
+		  argumentsStr = NULL;
+		  returned = 0;
 		}
 		;
 
@@ -628,23 +635,27 @@ func_body:	IDENTIFIER PARENTHESESL arguments PARENTHESESR MINUS LARGERT type
 		  if(newID == NULL){
 		    newID = CreateID($1);
 		    newID->type = strdup("Function");
-		    Insert(Top(SymbolTables)->table, newID);
+		    Insert(SymbolTables->table, newID);
 		  }
 		  else{
 		    printf("%s already existed!\n", $1);
 		  }
-
-		  if(argumentsStr == NULL){
-		    fprintf(Instructions, " %s %s ()\n", $7, $1);
+		  newID->argumentsTypeList = argumentsStr;
+		  newID->returnType = strdup($7);
+		  if(strcmp($1, "main") != 0){
+		    if(argumentsStr == NULL){
+		      fprintf(Instructions, " %s %s()\n", $7, $1);
+		    }
+		    else{
+		      fprintf(Instructions, " %s %s(%s)\n", $7, $1, argumentsStr);
+		    }
 		  }
 		  else{
-		    fprintf(Instructions, " %s %s (%s)\n", $7, $1, argumentsStr);
+  		    fprintf(Instructions, " %s %s(java.lang.String[])\n", $7, $1);
 		  }
 		  fprintf(Instructions, "max_stack 15\n");
 		  fprintf(Instructions, "max_locals 15\n{\n");
-		  IDstk *newTable = stkCreate();
-		  stkInsert(SymbolTables, newTable);
-		  inFuncBlock = 1;
+
 		}
 		|
 		IDENTIFIER PARENTHESESL arguments PARENTHESESR
@@ -654,31 +665,32 @@ func_body:	IDENTIFIER PARENTHESESL arguments PARENTHESESR MINUS LARGERT type
 		  if(newID == NULL){
 		    newID = CreateID($1);
 		    newID->type = strdup("Function");
-		    Insert(Top(SymbolTables)->table, newID);
+		    Insert(SymbolTables->table, newID);
 		  }
 		  else{
 		    printf("%s already existed!\n", $1);
 		  }
-
-		  if(argumentsStr == NULL){
-		    fprintf(Instructions, " void %s()\n", $1);
+		  newID->argumentsTypeList = argumentsStr;
+		  newID->returnType = strdup("void");
+		  if(strcmp($1, "main") != 0){
+		    if(argumentsStr == NULL){
+		      fprintf(Instructions, " void %s()\n", $1);
+		    }
+		    else{
+		      fprintf(Instructions, " void %s(%s)\n", $1, argumentsStr);
+		    }
 		  }
 		  else{
-		    fprintf(Instructions, " void %s(%s)\n", $1, argumentsStr);
+  		    fprintf(Instructions, " void %s(java.lang.String[])\n", $1);
 		  }
 		  fprintf(Instructions, "max_stack 15\n");
 		  fprintf(Instructions, "max_locals 15\n{\n");
-		  IDstk *newTable = stkCreate();
-		  printf("function table name = %d\n", newTable->tableName);
-		  stkInsert(SymbolTables, newTable);
-		  inFuncBlock = 1;
 		}
 		;
 
 func_argument:	func_argument COMMA IDENTIFIER COLON type
 		{
 		  ID *newID = Search(Top(SymbolTables)->table, $3);
-
 		  if(newID == NULL){
 		    newID = CreateID($3);
 		    newID->type = $5;
@@ -687,7 +699,6 @@ func_argument:	func_argument COMMA IDENTIFIER COLON type
 		    newID->globalORlocal = 1;
 		    Insert(Top(SymbolTables)->table, newID);
 		  }
-
 		  strcat(argumentsStr, ", ");
 		  strcat(argumentsStr, $5);
 		}
@@ -855,7 +866,12 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  fprintf(Instructions, "invokevirtual void java.io.PrintStream.print(java.lang.String)\n");
+		  if(nowType == 2){
+		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(java.lang.String)\n");
+		  }
+		  else{
+		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(int)\n");
+		  }
 		}
 		|
 		PRINTLN
@@ -865,7 +881,12 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(java.lang.String)\n");
+		  if(nowType == 2){
+		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(java.lang.String)\n");
+		  }
+		  else{
+		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(int)\n");
+		  }
 		}
 		|
 		READ IDENTIFIER
@@ -877,12 +898,14 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
 		  fprintf(Instructions, "return\n");
+		  returned = 1;
 		}
 		|
 		RETURN expr
 		{
 		  Trace("Reducing to simple statement\n");
 		  fprintf(Instructions, "ireturn\n");
+		  returned = 1;
 		}
 		;
 
@@ -1188,9 +1211,15 @@ array_ref:	IDENTIFIER SBRACKETSL integer_expr SBRACKETSR
 
 func_invoke:	IDENTIFIER PARENTHESESL func_invoke_arg PARENTHESESR
 		{
+		  ID *newID = Search(SymbolTables->table, $1);
+		  if(newID == NULL){
+		    printf("Function doesn't exist\n");
+		    exit(1);
+		  }
 		  Trace("Reducing to function invocation\n");
 		  $$ = strdup("0");
 		  nowType = 0;
+		  fprintf(Instructions, "invokestatic %s project3.%s(%s)\n", newID->returnType, $1, newID->argumentsTypeList);
 		}
 		;
 
@@ -1292,6 +1321,7 @@ IDstk *SymbolTables = NULL;
 int nowType = -1;
 int nowStkIndex = 0;
 int inFuncBlock = 0;
+int returned = 0;
 FILE *Instructions;
 char *argumentsStr = NULL;
 yyerror(msg)
@@ -1303,6 +1333,7 @@ char *msg;
 main(int argc, char **argv)
 {
     Instructions = fopen("./instructions.jasm", "w+");
+    fprintf(Instructions, "class project3\n{\n");
     nowTableName = 0;
     /* open the source program file */
     if (argc != 2) {
@@ -1317,5 +1348,7 @@ main(int argc, char **argv)
     /* perform parsing */
     if (yyparse() == 1)                 /* parsing */
         yyerror("Parsing error !");     /* syntax error */
+    fprintf(Instructions, "}\n");
+    fclose(Instructions);
 }
 

@@ -866,7 +866,7 @@ expr:		integer_expr
 		|
 		IDENTIFIER
 		{
-		  Trace("Reducing to expression\n");
+		  Trace("Reducing to expression1\n");
 		  ID *newID = Search(Top(SymbolTables)->table, $1);
 		  if(newID == NULL){
 		    newID = Search(SymbolTables->table, $1);
@@ -898,30 +898,10 @@ expr:		integer_expr
 		    printf("Error: Can't print type %s variable\n", newID->type);
 		  }
 		  if(newID->globalORlocal == 0){
-		    if(newID->value != NULL){
-		      if(strcmp(newID->type, "int") == 0 || strcmp(newID->type, "nint") == 0){
-			fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
-		      }
-		      else{
-			fprintf(Instructions, "iconst_%d\n", (strcmp("true",newID->value)==0?1:0));
-		      }
-		    }
-		    else{
-		      fprintf(Instructions, "getstatic int project3.%s\n", $1);
-		    }
+		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
 		  }
 		  else{
-		    if(newID->value != NULL){
-		      if(strcmp(newID->type, "int") == 0 || strcmp(newID->type, "nint") == 0){
-			fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
-		      }
-		      else{
-			fprintf(Instructions, "iconst_%d\n", (strcmp("true",newID->value)==0?1:0));
-		      }
-		    }
-		    else{
-		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
-		    }
+		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
 		  }
 		}
 		|
@@ -1010,7 +990,6 @@ integer_expr:	integer_expr PLUS integer_expr
 		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		  $$ = $1;
 		  nowType = 0;
-		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		}
 		|
 		REALNUMBER
@@ -1033,12 +1012,7 @@ integer_expr:	integer_expr PLUS integer_expr
   		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
 		  }
 		  else{
-		    if(strcmp(newID->type,"int")==0||strcmp(newID->type,"nint")==0){
-		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
-		    }
-		    else if(strcmp(newID->type,"bool")==0||strcmp(newID->type,"nbool")==0){
-		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
-		    }
+		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
 		  }
 		}
 		;
@@ -1046,45 +1020,85 @@ integer_expr:	integer_expr PLUS integer_expr
 boolean_expr:	boolean_expr AND boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "iand\n");
 		}
 		|
 		boolean_expr OR boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "ior\n");
 		}
 		|
 		NOT boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "ixor\n");
 		}
+		|
 		boolean_expr LESST boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "isub\n");
+		  fprintf(Instructions, "iflt L1\n");
+		  fprintf(Instructions, "iconst_0\n");
+		  fprintf(Instructions, "goto L2\n");
+		  fprintf(Instructions, "L1: iconst_1\n");
+		  fprintf(Instructions, "L2:\n");
 		}
 		|
 		boolean_expr LESSE boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "isub\n");
+		  fprintf(Instructions, "ifle L1\n");
+		  fprintf(Instructions, "iconst_0\n");
+		  fprintf(Instructions, "goto L2\n");
+		  fprintf(Instructions, "L1: iconst_1\n");
+		  fprintf(Instructions, "L2:\n");
 		}
 		|
 		boolean_expr LARGERT boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "isub\n");
+		  fprintf(Instructions, "ifgt L1\n");
+		  fprintf(Instructions, "iconst_0\n");
+		  fprintf(Instructions, "goto L2\n");
+		  fprintf(Instructions, "L1: iconst_1\n");
+		  fprintf(Instructions, "L2:\n");
 		}
 		|
 		boolean_expr LARGERE boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "isub\n");
+		  fprintf(Instructions, "ifge L1\n");
+		  fprintf(Instructions, "iconst_0\n");
+		  fprintf(Instructions, "goto L2\n");
+		  fprintf(Instructions, "L1: iconst_1\n");
+		  fprintf(Instructions, "L2:\n");
 		}
 		|
 		boolean_expr EQUAL boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "isub\n");
+		  fprintf(Instructions, "ifeq L1\n");
+		  fprintf(Instructions, "iconst_0\n");
+		  fprintf(Instructions, "goto L2\n");
+		  fprintf(Instructions, "L1: iconst_1\n");
+		  fprintf(Instructions, "L2:\n");
 		}
 		|
 		boolean_expr NEQUAL boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "isub\n");
+		  fprintf(Instructions, "ifne L1\n");
+		  fprintf(Instructions, "iconst_0\n");
+		  fprintf(Instructions, "goto L2\n");
+		  fprintf(Instructions, "L1: iconst_1\n");
+		  fprintf(Instructions, "L2:\n");
 		}
 		|
 		TRUE
@@ -1102,12 +1116,29 @@ boolean_expr:	boolean_expr AND boolean_expr
 		IDENTIFIER
 		{
 		  printf("Reducing to boolean expression\n");
+
+		  ID *newID = Search(Top(SymbolTables)->table, $1);
+		  if(newID == NULL){
+		    newID = Search(SymbolTables->table, $1);
+		    if(newID == NULL){
+		      printf("Error: Undefined variable\n");
+		      exit(1);
+		    }
+		  }
+		  if(newID->globalORlocal == 0){
+  		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		  }
+		  else{
+		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		  }
+
 		  $$ = $1;
 		}
 		|
 		NUMBER
 		{
 		  printf("Reducing to boolean expression\n");
+		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		  $$ = $1;
 		}
 		|

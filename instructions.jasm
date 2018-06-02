@@ -3,27 +3,90 @@ field static integer b = 1
 field static integer e = 2
 field static integer f = 0
 field static integer g
-sipush 3
+sipush 2
 istore 0
-sipush 0
-istore 1
-sipush 4
-istore 2
-sipush 1
-istore 3
 getstatic int project3.a
-getstatic int project3.e
-iadd
-istore 1
-getstatic int project3.e
 iload 0
-imul
-putstatic int project3.b
-getstatic int project3.e
-getstatic int project3.a
-idiv
-istore 3
-getstatic int project3.e
-getstatic int project3.a
 isub
-istore 3
+iflt L1
+iconst_0
+goto L2
+L1: iconst_1
+L2:
+getstatic java.io.PrintStream java.lang.System.out
+getstatic int project3.a
+invokevirtual void java.io.PrintStream.print(java.lang.String)
+getstatic int project3.e
+getstatic int project3.f
+isub
+ifeq L1
+iconst_0
+goto L2
+L1: iconst_1
+L2:
+getstatic java.io.PrintStream java.lang.System.out
+getstatic int project3.a
+invokevirtual void java.io.PrintStream.print(java.lang.String)
+iload 0
+getstatic int project3.e
+isub
+ifle L1
+iconst_0
+goto L2
+L1: iconst_1
+L2:
+getstatic java.io.PrintStream java.lang.System.out
+getstatic int project3.a
+invokevirtual void java.io.PrintStream.print(java.lang.String)
+getstatic int project3.e
+getstatic int project3.f
+isub
+ifne L1
+iconst_0
+goto L2
+L1: iconst_1
+L2:
+getstatic java.io.PrintStream java.lang.System.out
+getstatic int project3.a
+invokevirtual void java.io.PrintStream.print(java.lang.String)
+iload 0
+getstatic int project3.e
+isub
+ifgt L1
+iconst_0
+goto L2
+L1: iconst_1
+L2:
+getstatic java.io.PrintStream java.lang.System.out
+getstatic int project3.a
+invokevirtual void java.io.PrintStream.print(java.lang.String)
+getstatic int project3.e
+getstatic int project3.f
+iand
+getstatic java.io.PrintStream java.lang.System.out
+getstatic int project3.a
+invokevirtual void java.io.PrintStream.print(java.lang.String)
+getstatic int project3.a
+iload 0
+isub
+ifge L1
+iconst_0
+goto L2
+L1: iconst_1
+L2:
+getstatic java.io.PrintStream java.lang.System.out
+getstatic int project3.a
+invokevirtual void java.io.PrintStream.print(java.lang.String)
+iload 0
+getstatic int project3.f
+ior
+getstatic java.io.PrintStream java.lang.System.out
+getstatic int project3.a
+invokevirtual void java.io.PrintStream.print(java.lang.String)
+getstatic int project3.e
+ixor
+getstatic int project3.f
+ior
+getstatic java.io.PrintStream java.lang.System.out
+getstatic int project3.a
+invokevirtual void java.io.PrintStream.print(java.lang.String)

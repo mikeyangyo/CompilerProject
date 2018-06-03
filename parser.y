@@ -172,20 +172,14 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        nowType = -1;
 
 			if(Top(SymbolTables)->tableName == 1){
-			  for(int i = 0;i<tabNum;i++){
-			    fprintf(Instructions, "\t");
-			  }
+			  printtab(tabNum);
 			  fprintf(Instructions, "field static int %s = %s\n", $2, $6);
 			  newID->globalORlocal = 0;
 			}
 			else{
-			  for(int i = 0;i<tabNum;i++){
-			    fprintf(Instructions, "\t");
-			  }
+			  printtab(tabNum);
 			  fprintf(Instructions, "sipush %s\n", $6);
-			  for(int i = 0;i<tabNum;i++){
-			    fprintf(Instructions, "\t");
-			  }
+			  printtab(tabNum);
 			  fprintf(Instructions, "istore %d\n", nowStkIndex);
 			  newID->stkIndex = nowStkIndex;
 			  nowStkIndex++;
@@ -234,20 +228,14 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        nowType = -1;
 
 			if(Top(SymbolTables)->tableName == 1){
-			  for(int i = 0;i<tabNum;i++){
-			    fprintf(Instructions, "\t");
-			  }
+			  printtab(tabNum);
 			  fprintf(Instructions, "field static int %s = %d\n", $2, (strcmp($6, "true")==0?1:0));
 			  newID->globalORlocal = 0;
 			}
 			else{
-			  for(int i = 0;i<tabNum;i++){
-			    fprintf(Instructions, "\t");
-			  }
+			  printtab(tabNum);
 			  fprintf(Instructions, "sipush %d\n", (strcmp($6, "true")==0?1:0));
-			  for(int i = 0;i<tabNum;i++){
-			    fprintf(Instructions, "\t");
-			  }
+			  printtab(tabNum);
 			  fprintf(Instructions, "istore %d\n", nowStkIndex);
 			  newID->stkIndex = nowStkIndex;
 			  nowStkIndex++;
@@ -282,20 +270,14 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "field static int %s = %s\n", $2, $4);
 			newID->globalORlocal = 0;
 		      }
 		      else{
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "sipush %s\n", $4);
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "istore %d\n", nowStkIndex);
 			newID->stkIndex = nowStkIndex;
 			nowStkIndex++;
@@ -329,20 +311,14 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "field static int %s = %d\n", $2, ((strcmp($4,"true")==0)?1:0));
 			newID->globalORlocal = 0;
 		      }
 		      else{
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "sipush %d\n", (strcmp($4, "true")==0?1:0));
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "istore %d\n", nowStkIndex);
 			newID->stkIndex = nowStkIndex;
 			nowStkIndex++;
@@ -386,20 +362,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "field static int %s = %s\n", $3, $7);
 			newID->globalORlocal = 0;
 		      }
 		      else{
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "sipush %s\n", $7);
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "istore %d\n", nowStkIndex);
 			newID->stkIndex = nowStkIndex;
 			nowStkIndex++;
@@ -454,20 +424,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      nowType = -1;
 
 		      if(Top(SymbolTables)->tableName == 1){
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "field static int %s = %d\n", $3, (strcmp($7, "true")==0?1:0));
 			newID->globalORlocal = 0;
 		      }
 		      else{
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "sipush %d\n", (strcmp($7, "true")==0?1:0));
-			for(int i = 0;i<tabNum;i++){
-			  fprintf(Instructions, "\t");
-			}
+			printtab(tabNum);
 			fprintf(Instructions, "istore %d\n", nowStkIndex);
 			newID->stkIndex = nowStkIndex;
 			nowStkIndex++;
@@ -512,9 +476,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		  }
 
 		  if(Top(SymbolTables)->tableName == 1){
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "field static int %s\n", $3);
 		    newID->globalORlocal = 0;
 		  }
@@ -548,20 +510,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    nowType = -1;
 
 		    if(Top(SymbolTables)->tableName == 1){
-		      for(int i = 0;i<tabNum;i++){
-		        fprintf(Instructions, "\t");
-		      }
+		      printtab(tabNum);
 		      fprintf(Instructions, "field static int %s = %s\n", $3, $5);
 		      newID->globalORlocal = 0;
 		    }
 		    else{
-		     for(int i = 0;i<tabNum;i++){
-		       fprintf(Instructions, "\t");
-		     }
+		     printtab(tabNum);
 		     fprintf(Instructions, "sipush %s\n", $5);
-		     for(int i = 0;i<tabNum;i++){
-		       fprintf(Instructions, "\t");
-		     }
+		     printtab(tabNum);
 		     fprintf(Instructions, "istore %d\n", nowStkIndex);
 		     newID->stkIndex = nowStkIndex;
 		     nowStkIndex++;
@@ -601,20 +557,14 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    nowType = -1;
 
 		    if(Top(SymbolTables)->tableName == 1){
-		      for(int i = 0;i<tabNum;i++){
-		        fprintf(Instructions, "\t");
-		      }
+		      printtab(tabNum);
 		      fprintf(Instructions, "field static int %s = %d\n", $3, (strcmp($5, "true")==0?1:0));
 		      newID->globalORlocal = 0;
 		    }
 		    else{
-		      for(int i = 0;i<tabNum;i++){
-		        fprintf(Instructions, "\t");
-		      }
+		      printtab(tabNum);
 		      fprintf(Instructions, "sipush %d\n", (strcmp($5, "true")==0?1:0));
-		      for(int i = 0;i<tabNum;i++){
-		        fprintf(Instructions, "\t");
-		      }
+		      printtab(tabNum);
 		      fprintf(Instructions, "istore %d\n", nowStkIndex);
 		      newID->stkIndex = nowStkIndex;
 		      nowStkIndex++;
@@ -638,9 +588,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    ID *newID = CreateID($3);
 
 		    if(Top(SymbolTables)->tableName == 1){
-		      for(int i = 0;i<tabNum;i++){
-		        fprintf(Instructions, "\t");
-		      }
+		      printtab(tabNum);
 		      fprintf(Instructions, "field static int %s\n", $3);
 		      newID->globalORlocal = 0;
 		    }
@@ -684,9 +632,7 @@ array_declar:	LET MUT IDENTIFIER SBRACKETSL type COMMA NUMBER SBRACKETSR
 
 func_declar:	FN
 		{
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "method public static");
 		  IDstk *newTable = stkCreate();
 		  stkInsert(SymbolTables, newTable);
@@ -696,15 +642,11 @@ func_declar:	FN
 		{
 		  Trace("Reducing to function declaration w/ arguments and return type\n");
 		  if(returned == 0){
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
      		    fprintf(Instructions, "return\n");
 		  }
 		  tabNum--;
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "}\n");
 		  inFuncBlock = 0;
 		  argumentsStr = NULL;
@@ -741,17 +683,11 @@ func_body:	IDENTIFIER PARENTHESESL arguments PARENTHESESR MINUS LARGERT type
 		  else{
   		    fprintf(Instructions, " %s %s(java.lang.String[])\n", $7, $1);
 		  }
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "max_stack 15\n");
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "max_locals 15\n");
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "{\n");
 		  tabNum++;
 		}
@@ -781,17 +717,11 @@ func_body:	IDENTIFIER PARENTHESESL arguments PARENTHESESR MINUS LARGERT type
 		  else{
   		    fprintf(Instructions, " void %s(java.lang.String[])\n", $1);
 		  }
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "max_stack 15\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "max_locals 15\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "{\n");
 		  tabNum++;
 		}
@@ -915,15 +845,11 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		    exit(1);
 		  }
 		  if(newID->globalORlocal == 1){
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "istore %d\n", newID->stkIndex);
 		  }
 		  else if(newID->globalORlocal == 0){
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "putstatic int project3.%s\n", newID->name);
 		  }
 		  switch(nowType){
@@ -976,48 +902,36 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		|
 		PRINT
 		{
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
   		  fprintf(Instructions, "getstatic java.io.PrintStream java.lang.System.out\n");
 		}
 		expr
 		{
 		  Trace("Reducing to simple statement\n");
 		  if(nowType == 2){
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.print(java.lang.String)\n");
 		  }
 		  else{
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.print(int)\n");
 		  }
 		}
 		|
 		PRINTLN
 		{
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
   		  fprintf(Instructions, "getstatic java.io.PrintStream java.lang.System.out\n");
 		}
 		expr
 		{
 		  Trace("Reducing to simple statement\n");
 		  if(nowType == 2){
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(java.lang.String)\n");
 		  }
 		  else{
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(int)\n");
 		  }
 		}
@@ -1030,9 +944,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		RETURN
 		{
 		  Trace("Reducing to simple statement\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "return\n");
 		  returned = 1;
 		}
@@ -1040,9 +952,7 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		RETURN expr
 		{
 		  Trace("Reducing to simple statement\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "ireturn\n");
 		  returned = 1;
 		}
@@ -1098,15 +1008,11 @@ expr:		integer_expr
 		    printf("Error: Can't print type %s variable\n", newID->type);
 		  }
 		  if(newID->globalORlocal == 0){
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
 		  }
 		  else{
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
 		  }
 		}
@@ -1133,9 +1039,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) + atof($3)));
 		    nowType = 1;
 		  }
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iadd\n");
 		}
 		|
@@ -1150,9 +1054,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) - atof($3)));
 		    nowType = 1;
 		  }
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "isub\n");
 		}
 		|
@@ -1167,9 +1069,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) * atof($3)));
 		    nowType = 1;
 		  }
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "imul\n");
 		}
 		|
@@ -1183,9 +1083,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (atof($1) / atof($3)));
 		    nowType = 1;
 		  }
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "idiv\n");
 		}
 		|
@@ -1200,17 +1098,13 @@ integer_expr:	integer_expr PLUS integer_expr
 		    sprintf($$, "%f", (float)((atof($2) * -1)));
 		    nowType = 1;
 		  }
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "ineg\n");
 		}
 		|
 		NUMBER
 		{
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		  $$ = $1;
 		  nowType = 0;
@@ -1230,15 +1124,11 @@ integer_expr:	integer_expr PLUS integer_expr
 		    exit(1);
 		  }
 		  if(newID->globalORlocal == 0){
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
   		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
 		  }
 		  else{
-		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+		    printtab(tabNum);
 		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
 		  }
 		}
@@ -1247,53 +1137,37 @@ integer_expr:	integer_expr PLUS integer_expr
 boolean_expr:	boolean_expr AND boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iand\n");
 		}
 		|
 		boolean_expr OR boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "ior\n");
 		}
 		|
 		NOT boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "ixor\n");
 		}
 		|
 		boolean_expr LESST boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "isub\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iflt L%d\n", nowLabel++);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_0\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "goto L%d\n", nowLabel++);
 		  fprintf(Instructions, "L%d:\n", nowLabel-2);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_1\n");
 		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
@@ -1301,26 +1175,16 @@ boolean_expr:	boolean_expr AND boolean_expr
 		boolean_expr LESSE boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "isub\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "ifle L%d\n", nowLabel++);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_0\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "goto L%d\n", nowLabel++);
 		  fprintf(Instructions, "L%d:\n", nowLabel-2);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_1\n");
 		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
@@ -1328,26 +1192,16 @@ boolean_expr:	boolean_expr AND boolean_expr
 		boolean_expr LARGERT boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "isub\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "ifgt L%d\n", nowLabel++);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_0\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "goto L%d\n", nowLabel++);
 		  fprintf(Instructions, "L%d:\n", nowLabel-2);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_1\n");
 		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
@@ -1355,26 +1209,16 @@ boolean_expr:	boolean_expr AND boolean_expr
 		boolean_expr LARGERE boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "isub\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "ifge L%d\n", nowLabel++);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_0\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "goto L%d\n", nowLabel++);
 		  fprintf(Instructions, "L%d:\n", nowLabel-2);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_1\n");
 		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
@@ -1382,26 +1226,16 @@ boolean_expr:	boolean_expr AND boolean_expr
 		boolean_expr EQUAL boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "isub\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "ifeq L%d\n", nowLabel++);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_0\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "goto L%d\n", nowLabel++);
 		  fprintf(Instructions, "L%d:\n", nowLabel-2);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_1\n");
 		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
@@ -1409,26 +1243,16 @@ boolean_expr:	boolean_expr AND boolean_expr
 		boolean_expr NEQUAL boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "isub\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "ifne L%d\n", nowLabel++);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_0\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "goto L%d\n", nowLabel++);
 		  fprintf(Instructions, "L%d:\n", nowLabel-2);
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_1\n");
 		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
@@ -1436,18 +1260,14 @@ boolean_expr:	boolean_expr AND boolean_expr
 		TRUE
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_1\n");
 		}
 		|
 		FALSE		
 		{
 		  printf("Reducing to boolean expression\n");
-		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+		  printtab(tabNum);
 		  fprintf(Instructions, "iconst_0\n");
 		}
 		|
@@ -1460,15 +1280,11 @@ boolean_expr:	boolean_expr AND boolean_expr
 		    exit(1);
 		  }
 		  if(newID->globalORlocal == 0){
-  		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+  		    printtab(tabNum);
   		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
 		  }
 		  else{
-  		    for(int i = 0;i<tabNum;i++){
-		      fprintf(Instructions, "\t");
-		    }
+  		    printtab(tabNum);
 		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
 		  }
 
@@ -1478,9 +1294,7 @@ boolean_expr:	boolean_expr AND boolean_expr
 		NUMBER
 		{
 		  printf("Reducing to boolean expression\n");
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "sipush %d\n", atoi($1));
 		  $$ = $1;
 		}
@@ -1508,9 +1322,7 @@ func_invoke:	IDENTIFIER PARENTHESESL func_invoke_arg PARENTHESESR
 		  Trace("Reducing to function invocation\n");
 		  $$ = strdup("0");
 		  nowType = 0;
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "invokestatic %s project3.%s(%s)\n", newID->returnType, $1, newID->argumentsTypeList);
 		}
 		;
@@ -1522,16 +1334,12 @@ func_invoke_arg:func_invoke_arg COMMA expr
 
 conditional:	IF PARENTHESESL boolean_expr PARENTHESESR
 		{
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "ifeq L%d\n", nowLabel++);
 		}
 		block
 		{
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "goto L%d\n", nowLabel++);
 		  fprintf(Instructions, "L%d:\n", nowLabel-2);
 		}
@@ -1551,17 +1359,13 @@ loop:		WHILE
 		}
 		PARENTHESESL boolean_expr PARENTHESESR
 		{
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "ifeg %d\n", nowLabel++);
 		}
 		block
 		{
 		  Trace("Reducing to loop\n");
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "goto L%d\n", nowLabel-2);
 		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
@@ -1604,9 +1408,7 @@ constant_expr:	NUMBER
 		{
 		  $$ = $1;
 		  nowType = 2;
-  		  for(int i = 0;i<tabNum;i++){
-		    fprintf(Instructions, "\t");
-		  }
+  		  printtab(tabNum);
 		  fprintf(Instructions, "ldc \"%s\"\n", $1);
 		}
 		|
@@ -1663,3 +1465,8 @@ main(int argc, char **argv)
     fclose(Instructions);
 }
 
+void printtab(int num){
+  for(int i = 0; i < num; i++){
+    fprintf(Instructions, "\t");
+  }
+}

@@ -1,46 +1,47 @@
 class project3
 {
-field static int c
-field static int a = 5
-method public static int add(int, int)
-max_stack 15
-max_locals 15
-{
-iload 0
-iload 1
-iadd
-ireturn
-}
-method public static void main(java.lang.String[])
-max_stack 15
-max_locals 15
-{
-getstatic int project3.a
-sipush 10
-invokestatic int project3.add(int, int)
-putstatic int project3.c
-getstatic int project3.c
-sipush 10
-isub
-ifgt L0
-iconst_0
-goto L1
-L0: iconst_1
+	field static int c
+	field static int a = 5
+	method public static int add(int, int)
+	max_stack 15
+	max_locals 15
+	{
+		iload 0
+		iload 1
+		iadd
+		ireturn
+	}
+	method public static void main(java.lang.String[])
+	max_stack 15
+	max_locals 15
+	{
+		getstatic int project3.a
+		sipush 10
+		invokestatic int project3.add(int, int)
+		putstatic int project3.c
+		getstatic int project3.c
+		sipush 10
+		isub
+		ifgt L0
+		iconst_0
+		goto L1
+L0:
+		iconst_1
 L1:
-ifeq L2
-getstatic java.io.PrintStream java.lang.System.out
-getstatic int project3.c
-ineg
-invokevirtual void java.io.PrintStream.print(int)
-goto L3
+		ifeq L2
+		getstatic java.io.PrintStream java.lang.System.out
+		getstatic int project3.c
+		ineg
+		invokevirtual void java.io.PrintStream.print(int)
+		goto L3
 L2:
-getstatic java.io.PrintStream java.lang.System.out
-getstatic int project3.c
-invokevirtual void java.io.PrintStream.print(int)
+		getstatic java.io.PrintStream java.lang.System.out
+		getstatic int project3.c
+		invokevirtual void java.io.PrintStream.print(int)
 L3:
-getstatic java.io.PrintStream java.lang.System.out
-ldc "Hello World"
-invokevirtual void java.io.PrintStream.println(java.lang.String)
-return
-}
+		getstatic java.io.PrintStream java.lang.System.out
+		ldc "Hello World"
+		invokevirtual void java.io.PrintStream.println(java.lang.String)
+		return
+	}
 }

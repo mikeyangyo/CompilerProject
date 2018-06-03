@@ -867,10 +867,10 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		{
 		  Trace("Reducing to simple statement\n");
 		  if(nowType == 2){
-		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(java.lang.String)\n");
+		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.print(java.lang.String)\n");
 		  }
 		  else{
-		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.println(int)\n");
+		    fprintf(Instructions, "invokevirtual void java.io.PrintStream.print(int)\n");
 		  }
 		}
 		|
@@ -1097,66 +1097,66 @@ boolean_expr:	boolean_expr AND boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		  fprintf(Instructions, "isub\n");
-		  fprintf(Instructions, "iflt L1\n");
+		  fprintf(Instructions, "iflt L%d\n", nowLabel++);
 		  fprintf(Instructions, "iconst_0\n");
-		  fprintf(Instructions, "goto L2\n");
-		  fprintf(Instructions, "L1: iconst_1\n");
-		  fprintf(Instructions, "L2:\n");
+		  fprintf(Instructions, "goto L%d\n", nowLabel++);
+		  fprintf(Instructions, "L%d: iconst_1\n", nowLabel-2);
+		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
 		|
 		boolean_expr LESSE boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		  fprintf(Instructions, "isub\n");
-		  fprintf(Instructions, "ifle L1\n");
+		  fprintf(Instructions, "ifle L%d\n", nowLabel++);
 		  fprintf(Instructions, "iconst_0\n");
-		  fprintf(Instructions, "goto L2\n");
-		  fprintf(Instructions, "L1: iconst_1\n");
-		  fprintf(Instructions, "L2:\n");
+		  fprintf(Instructions, "goto L%d\n", nowLabel++);
+		  fprintf(Instructions, "L%d: iconst_1\n", nowLabel-2);
+		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
 		|
 		boolean_expr LARGERT boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		  fprintf(Instructions, "isub\n");
-		  fprintf(Instructions, "ifgt L1\n");
+		  fprintf(Instructions, "ifgt L%d\n", nowLabel++);
 		  fprintf(Instructions, "iconst_0\n");
-		  fprintf(Instructions, "goto L2\n");
-		  fprintf(Instructions, "L1: iconst_1\n");
-		  fprintf(Instructions, "L2:\n");
+		  fprintf(Instructions, "goto L%d\n", nowLabel++);
+		  fprintf(Instructions, "L%d: iconst_1\n", nowLabel-2);
+		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
 		|
 		boolean_expr LARGERE boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		  fprintf(Instructions, "isub\n");
-		  fprintf(Instructions, "ifge L1\n");
+		  fprintf(Instructions, "ifge L%d\n", nowLabel++);
 		  fprintf(Instructions, "iconst_0\n");
-		  fprintf(Instructions, "goto L2\n");
-		  fprintf(Instructions, "L1: iconst_1\n");
-		  fprintf(Instructions, "L2:\n");
+		  fprintf(Instructions, "goto L%d\n", nowLabel++);
+		  fprintf(Instructions, "L%d: iconst_1\n", nowLabel-2);
+		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
 		|
 		boolean_expr EQUAL boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		  fprintf(Instructions, "isub\n");
-		  fprintf(Instructions, "ifeq L1\n");
+		  fprintf(Instructions, "ifeq L%d\n", nowLabel++);
 		  fprintf(Instructions, "iconst_0\n");
-		  fprintf(Instructions, "goto L2\n");
-		  fprintf(Instructions, "L1: iconst_1\n");
-		  fprintf(Instructions, "L2:\n");
+		  fprintf(Instructions, "goto L%d\n", nowLabel++);
+		  fprintf(Instructions, "L%d: iconst_1\n", nowLabel-2);
+		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
 		|
 		boolean_expr NEQUAL boolean_expr
 		{
 		  printf("Reducing to boolean expression\n");
 		  fprintf(Instructions, "isub\n");
-		  fprintf(Instructions, "ifne L1\n");
+		  fprintf(Instructions, "ifne L%d\n", nowLabel++);
 		  fprintf(Instructions, "iconst_0\n");
-		  fprintf(Instructions, "goto L2\n");
-		  fprintf(Instructions, "L1: iconst_1\n");
-		  fprintf(Instructions, "L2:\n");
+		  fprintf(Instructions, "goto L%d\n", nowLabel++);
+		  fprintf(Instructions, "L%d: iconst_1\n", nowLabel-2);
+		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
 		|
 		TRUE
@@ -1230,15 +1230,16 @@ func_invoke_arg:func_invoke_arg COMMA expr
 
 conditional:	IF PARENTHESESL boolean_expr PARENTHESESR
 		{
-		  fprintf(Instructions, "ifeq Lfalse\n");
+		  fprintf(Instructions, "ifeq L%d\n", nowLabel++);
 		}
 		block
 		{
-		  fprintf(Instructions, "goto Lexit\nLfalse:\n");
+		  fprintf(Instructions, "goto L%d\n", nowLabel++);
+		  fprintf(Instructions, "L%d:\n", nowLabel-2);
 		}
 		conditional_else
 		{
-  		  fprintf(Instructions, "Lexit:\n");
+  		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
 		;
 
@@ -1248,17 +1249,17 @@ conditional_else:ELSE block
 
 loop:		WHILE
 		{
-		  fprintf(Instructions, "Lbegin:\n");
+		  fprintf(Instructions, "L%d:\n", nowLabel++);
 		}
 		PARENTHESESL boolean_expr PARENTHESESR
 		{
-		  fprintf(Instructions, "ifeg Lexit\n");
+		  fprintf(Instructions, "ifeg %d\n", nowLabel++);
 		}
 		block
 		{
 		  Trace("Reducing to loop\n");
-		  fprintf(Instructions, "goto Lbegin\n");
-		  fprintf(Instructions, "Lexit:\n");
+		  fprintf(Instructions, "goto L%d\n", nowLabel-2);
+		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
 		;
 
@@ -1322,6 +1323,7 @@ int nowType = -1;
 int nowStkIndex = 0;
 int inFuncBlock = 0;
 int returned = 0;
+int nowLabel = 0;
 FILE *Instructions;
 char *argumentsStr = NULL;
 yyerror(msg)

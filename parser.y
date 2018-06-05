@@ -651,6 +651,7 @@ func_declar:	FN
 		  inFuncBlock = 0;
 		  argumentsStr = NULL;
 		  returned = 0;
+		  nowStkIndex = 0;
 		}
 		;
 
@@ -1075,6 +1076,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		|
 		integer_expr DIVIDE integer_expr
 		{
+/*
 		  if(nowType == 0){
 		    sprintf($$, "%d", atoi($1) / atoi($3));
 		    nowType = 1;
@@ -1082,7 +1084,7 @@ integer_expr:	integer_expr PLUS integer_expr
 		  else if(nowType == 1){
 		    sprintf($$, "%f", (atof($1) / atof($3)));
 		    nowType = 1;
-		  }
+		  }*/
 		  printtab(tabNum);
 		  fprintf(Instructions, "idiv\n");
 		}
@@ -1360,13 +1362,13 @@ loop:		WHILE
 		PARENTHESESL boolean_expr PARENTHESESR
 		{
   		  printtab(tabNum);
-		  fprintf(Instructions, "ifeg %d\n", nowLabel++);
+		  fprintf(Instructions, "ifeq L%d\n", nowLabel++);
 		}
 		block
 		{
 		  Trace("Reducing to loop\n");
   		  printtab(tabNum);
-		  fprintf(Instructions, "goto L%d\n", nowLabel-2);
+		  fprintf(Instructions, "goto L%d\n", nowLabel-4);
 		  fprintf(Instructions, "L%d:\n", nowLabel-1);
 		}
 		;

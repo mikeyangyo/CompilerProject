@@ -168,6 +168,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        *temp = atoi($6);
 		        void *val = (void*)temp;
 		        newID->type = "int";
+			newID->variableType = 0;
 		        newID->value = val;
 		        nowType = -1;
 		        Insert(Top(SymbolTables)->table, newID);
@@ -182,6 +183,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        *temp = atof($6);
 		        void *val = (void*)temp;
 		        newID->type = "float";
+		        newID->variableType = 0;
 		        newID->value = val;
 		        nowType = -1;
 		        Insert(Top(SymbolTables)->table, newID);
@@ -195,6 +197,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        char *temp = strdup($6);
 		        void *val = (void*)temp;
 		        newID->type = "str";
+			newID->variableType = 0;
 		        newID->value = val;
 		        nowType = -1;
 		        Insert(Top(SymbolTables)->table, newID);
@@ -207,6 +210,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      else{
 		        char *temp = strdup($6);
 		        void *val = (void*)temp;
+			newID->variableType = 0;
 		        newID->type = "bool";
 		        newID->value = val;
 		        nowType = -1;
@@ -233,6 +237,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      int *temp = (int*)malloc(sizeof(int));
 		      *temp = atoi($4);
 		      void *val = (void*)temp;
+		      newID->variableType = 0;
 		      newID->type = "nint";
 		      newID->value = val;
 		      nowType = -1;
@@ -243,6 +248,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      *temp = atof($4);
 		      void *val = (void*)temp;
 		      newID->type = "nfloat";
+		      newID->variableType = 0;
 		      newID->value = val;
 		      nowType = -1;
 		      Insert(Top(SymbolTables)->table, newID);
@@ -251,6 +257,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      char *temp = strdup($4);
 		      void *val = (void*)temp;
 		      newID->type = "nstr";
+		      newID->variableType = 0;
 		      newID->value = val;
 		      nowType = -1;
 		      Insert(Top(SymbolTables)->table, newID);
@@ -259,6 +266,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      char *temp = strdup($4);
 		      void *val = (void*)temp;
 		      newID->type = "nbool";
+		      newID->variableType = 0;
 		      newID->value = val;
 		      nowType = -1;
 		      Insert(Top(SymbolTables)->table, newID);
@@ -293,6 +301,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      int *temp = (int*)malloc(sizeof(int));
 		      *temp = atoi($7);
 		      void *val = (void*)temp;
+		      newID->variableType = 1;
 		      newID->type = "int";
 		      newID->value = val;
 		      nowType = -1;
@@ -325,6 +334,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      float *temp = (float*)malloc(sizeof(float));
 		      *temp = atof($7);
 		      void *val = (void*)temp;
+		      newID->variableType = 1;
 		      newID->type = "float";
 		      newID->value = val;
 		      nowType = -1;
@@ -341,6 +351,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      char *temp = strdup($7);
 		      void *val = (void*)temp;
 		      newID->type = "str";
+		      newID->variableType = 1;
 		      newID->value = val;
 		      nowType = -1;
 		      if(existed == 0){
@@ -356,6 +367,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      char *temp = strdup($7);
 		      void *val = (void*)temp;
 		      newID->type = "bool";
+		      newID->variableType = 1;
 		      newID->value = val;
 		      nowType = -1;
 
@@ -395,7 +407,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    newID = CreateID($3);
 		    existed = 0;
 		  }
-
+		  newID->variableType = 1;
 		  if(newID->value == NULL){
 		    newID->type = $5;
 		  }
@@ -441,6 +453,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    int *temp = (int*)malloc(sizeof(int));
 		    *temp = atoi($5);
 		    void *val = (void*)temp;
+		    newID->variableType = 1;
 		    newID->type = "nint";
 		    newID->value = val;
 		    nowType = -1;
@@ -469,6 +482,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    *temp = atof($5);
 		    void *val = (void*)temp;
 		    newID->type = "nfloat";
+		    newID->variableType = 1;
 		    newID->value = val;
 		    nowType = -1;
 		    if(existed == 0){
@@ -479,6 +493,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    char *temp = strdup($5);
 		    void *val = (void*)temp;
 		    newID->type = "nstr";
+		    newID->variableType = 1;
 		    newID->value = val;
 		    nowType = -1;
 		    if(existed == 0){
@@ -489,6 +504,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    char *temp = strdup($5);
 		    void *val = (void*)temp;
 		    newID->type = "nbool";
+		    newID->variableType = 1;
 		    newID->value = val;
 		    nowType = -1;
 
@@ -522,7 +538,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		  Trace("Reducing to variable declaration w/ no type and initial value\n");
 		  if(Search(Top(SymbolTables)->table, $3) == NULL){
 		    ID *newID = CreateID($3);
-
+		    newID->variableType = 1;
 		    if(Top(SymbolTables)->tableName == 1){
 		      printtab(tabNum);
 		      fprintf(Instructions, "field static int %s\n", $3);

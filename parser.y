@@ -1089,6 +1089,12 @@ integer_expr:	integer_expr PLUS integer_expr
 		  fprintf(Instructions, "idiv\n");
 		}
 		|
+		integer_expr MOD integer_expr
+		{
+		  printtab(tabNum);
+		  fprintf(Instructions, "irem\n");
+		}
+		|
 		MINUS integer_expr %prec UMINUS
 		{
 		  printf("Reducing to integer expression\n");

@@ -170,22 +170,6 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        newID->type = "int";
 		        newID->value = val;
 		        nowType = -1;
-
-			if(Top(SymbolTables)->tableName == 1){
-			  printtab(tabNum);
-			  fprintf(Instructions, "field static int %s = %s\n", $2, $6);
-			  newID->globalORlocal = 0;
-			}
-			else{
-			  printtab(tabNum);
-			  fprintf(Instructions, "sipush %s\n", $6);
-			  printtab(tabNum);
-			  fprintf(Instructions, "istore %d\n", nowStkIndex);
-			  newID->stkIndex = nowStkIndex;
-			  nowStkIndex++;
-			  newID->globalORlocal = 1;
-			}
-
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
 		    }
@@ -226,22 +210,6 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        newID->type = "bool";
 		        newID->value = val;
 		        nowType = -1;
-
-			if(Top(SymbolTables)->tableName == 1){
-			  printtab(tabNum);
-			  fprintf(Instructions, "field static int %s = %d\n", $2, (strcmp($6, "true")==0?1:0));
-			  newID->globalORlocal = 0;
-			}
-			else{
-			  printtab(tabNum);
-			  fprintf(Instructions, "sipush %d\n", (strcmp($6, "true")==0?1:0));
-			  printtab(tabNum);
-			  fprintf(Instructions, "istore %d\n", nowStkIndex);
-			  newID->stkIndex = nowStkIndex;
-			  nowStkIndex++;
-			  newID->globalORlocal = 1;
-			}
-
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
 		    }
@@ -268,22 +236,6 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      newID->type = "nint";
 		      newID->value = val;
 		      nowType = -1;
-
-		      if(Top(SymbolTables)->tableName == 1){
-			printtab(tabNum);
-			fprintf(Instructions, "field static int %s = %s\n", $2, $4);
-			newID->globalORlocal = 0;
-		      }
-		      else{
-			printtab(tabNum);
-			fprintf(Instructions, "sipush %s\n", $4);
-			printtab(tabNum);
-			fprintf(Instructions, "istore %d\n", nowStkIndex);
-			newID->stkIndex = nowStkIndex;
-			nowStkIndex++;
-			newID->globalORlocal = 1;
-		      }
-
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
 		    else if(nowType == 1){
@@ -309,22 +261,6 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      newID->type = "nbool";
 		      newID->value = val;
 		      nowType = -1;
-
-		      if(Top(SymbolTables)->tableName == 1){
-			printtab(tabNum);
-			fprintf(Instructions, "field static int %s = %d\n", $2, ((strcmp($4,"true")==0)?1:0));
-			newID->globalORlocal = 0;
-		      }
-		      else{
-			printtab(tabNum);
-			fprintf(Instructions, "sipush %d\n", (strcmp($4, "true")==0?1:0));
-			printtab(tabNum);
-			fprintf(Instructions, "istore %d\n", nowStkIndex);
-			newID->stkIndex = nowStkIndex;
-			nowStkIndex++;
-			newID->globalORlocal = 1;
-		      }
-
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
 		    else{

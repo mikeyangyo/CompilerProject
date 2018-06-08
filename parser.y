@@ -797,13 +797,15 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		    printf("Error: Undefined variable\n");
 		    exit(1);
 		  }
-		  if(newID->globalORlocal == 1){
-		    printtab(tabNum);
-		    fprintf(Instructions, "istore %d\n", newID->stkIndex);
-		  }
-		  else if(newID->globalORlocal == 0){
-		    printtab(tabNum);
-		    fprintf(Instructions, "putstatic int project3.%s\n", newID->name);
+		  if(newID->variableType == 1){
+		    if(newID->globalORlocal == 1){
+		      printtab(tabNum);
+		      fprintf(Instructions, "istore %d\n", newID->stkIndex);
+		    }
+		    else if(newID->globalORlocal == 0){
+		      printtab(tabNum);
+		      fprintf(Instructions, "putstatic int project3.%s\n", newID->name);
+		    }
 		  }
 		  switch(nowType){
 		    case 0:
@@ -960,13 +962,15 @@ expr:		integer_expr
 		  else{
 		    printf("Error: Can't print type %s variable\n", newID->type);
 		  }
-		  if(newID->globalORlocal == 0){
-		    printtab(tabNum);
-		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
-		  }
-		  else{
-		    printtab(tabNum);
-		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		  if(newID->variableType == 1){
+		    if(newID->globalORlocal == 0){
+		      printtab(tabNum);
+		      fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		    }
+		    else{
+		      printtab(tabNum);
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    }
 		  }
 		}
 		|
@@ -1028,15 +1032,6 @@ integer_expr:	integer_expr PLUS integer_expr
 		|
 		integer_expr DIVIDE integer_expr
 		{
-/*
-		  if(nowType == 0){
-		    sprintf($$, "%d", atoi($1) / atoi($3));
-		    nowType = 1;
-		  }
-		  else if(nowType == 1){
-		    sprintf($$, "%f", (atof($1) / atof($3)));
-		    nowType = 1;
-		  }*/
 		  printtab(tabNum);
 		  fprintf(Instructions, "idiv\n");
 		}
@@ -1083,13 +1078,19 @@ integer_expr:	integer_expr PLUS integer_expr
 		    printf("Error: Undefined variable\n");
 		    exit(1);
 		  }
-		  if(newID->globalORlocal == 0){
-		    printtab(tabNum);
-  		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		  if(newID->variableType == 1){
+		    if(newID->globalORlocal == 0){
+		      printtab(tabNum);
+  		      fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		    }
+		    else{
+		      printtab(tabNum);
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    }
 		  }
-		  else{
+		  else if(newID->variableType == 0){
 		    printtab(tabNum);
-		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
 		  }
 		}
 		;
@@ -1239,15 +1240,20 @@ boolean_expr:	boolean_expr AND boolean_expr
 		    printf("Error: Undefined variable\n");
 		    exit(1);
 		  }
-		  if(newID->globalORlocal == 0){
-  		    printtab(tabNum);
-  		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		  if(newID->variableType == 1){
+		    if(newID->globalORlocal == 0){
+  		      printtab(tabNum);
+  		      fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		    }
+		    else{
+  		      printtab(tabNum);
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    }
 		  }
-		  else{
-  		    printtab(tabNum);
-		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		  else if(newID->variableType == 0){
+		    printtab(tabNum);
+		    fprintf(Instructions, "iconst_%s\n", (strcmp("true", (char*)newID->value)==0?"1", "0"));
 		  }
-
 		  $$ = $1;
 		}
 		|

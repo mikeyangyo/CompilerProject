@@ -5,6 +5,7 @@ ID* CreateID(char *newName){
   newID = (ID*)malloc(sizeof(ID));
   newID->name = newName;
   newID->type = NULL;
+  newID->variableType = -1;
   newID->value = NULL;
   newID->stkIndex = -1;
   newID->globalORlocal = -1;
@@ -30,6 +31,7 @@ int Insert(ID *givenList, ID *newID){
     current->globalORlocal = newID->globalORlocal;
     current->argumentsTypeList = newID->argumentsTypeList;
     current->returnType = newID->returnType;
+    current->variableType = newID->variableType;
     return 0;
   }
   while(current->next != NULL){

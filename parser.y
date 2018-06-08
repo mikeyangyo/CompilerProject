@@ -168,24 +168,9 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        *temp = atoi($6);
 		        void *val = (void*)temp;
 		        newID->type = "int";
+			newID->variableType = 0;
 		        newID->value = val;
 		        nowType = -1;
-
-			if(Top(SymbolTables)->tableName == 1){
-			  printtab(tabNum);
-			  fprintf(Instructions, "field static int %s = %s\n", $2, $6);
-			  newID->globalORlocal = 0;
-			}
-			else{
-			  printtab(tabNum);
-			  fprintf(Instructions, "sipush %s\n", $6);
-			  printtab(tabNum);
-			  fprintf(Instructions, "istore %d\n", nowStkIndex);
-			  newID->stkIndex = nowStkIndex;
-			  nowStkIndex++;
-			  newID->globalORlocal = 1;
-			}
-
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
 		    }
@@ -198,6 +183,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        *temp = atof($6);
 		        void *val = (void*)temp;
 		        newID->type = "float";
+		        newID->variableType = 0;
 		        newID->value = val;
 		        nowType = -1;
 		        Insert(Top(SymbolTables)->table, newID);
@@ -211,6 +197,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		        char *temp = strdup($6);
 		        void *val = (void*)temp;
 		        newID->type = "str";
+			newID->variableType = 0;
 		        newID->value = val;
 		        nowType = -1;
 		        Insert(Top(SymbolTables)->table, newID);
@@ -223,25 +210,10 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      else{
 		        char *temp = strdup($6);
 		        void *val = (void*)temp;
+			newID->variableType = 0;
 		        newID->type = "bool";
 		        newID->value = val;
 		        nowType = -1;
-
-			if(Top(SymbolTables)->tableName == 1){
-			  printtab(tabNum);
-			  fprintf(Instructions, "field static int %s = %d\n", $2, (strcmp($6, "true")==0?1:0));
-			  newID->globalORlocal = 0;
-			}
-			else{
-			  printtab(tabNum);
-			  fprintf(Instructions, "sipush %d\n", (strcmp($6, "true")==0?1:0));
-			  printtab(tabNum);
-			  fprintf(Instructions, "istore %d\n", nowStkIndex);
-			  newID->stkIndex = nowStkIndex;
-			  nowStkIndex++;
-			  newID->globalORlocal = 1;
-			}
-
 		        Insert(Top(SymbolTables)->table, newID);
 		      }
 		    }
@@ -265,25 +237,10 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      int *temp = (int*)malloc(sizeof(int));
 		      *temp = atoi($4);
 		      void *val = (void*)temp;
+		      newID->variableType = 0;
 		      newID->type = "nint";
 		      newID->value = val;
 		      nowType = -1;
-
-		      if(Top(SymbolTables)->tableName == 1){
-			printtab(tabNum);
-			fprintf(Instructions, "field static int %s = %s\n", $2, $4);
-			newID->globalORlocal = 0;
-		      }
-		      else{
-			printtab(tabNum);
-			fprintf(Instructions, "sipush %s\n", $4);
-			printtab(tabNum);
-			fprintf(Instructions, "istore %d\n", nowStkIndex);
-			newID->stkIndex = nowStkIndex;
-			nowStkIndex++;
-			newID->globalORlocal = 1;
-		      }
-
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
 		    else if(nowType == 1){
@@ -291,6 +248,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      *temp = atof($4);
 		      void *val = (void*)temp;
 		      newID->type = "nfloat";
+		      newID->variableType = 0;
 		      newID->value = val;
 		      nowType = -1;
 		      Insert(Top(SymbolTables)->table, newID);
@@ -299,6 +257,7 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      char *temp = strdup($4);
 		      void *val = (void*)temp;
 		      newID->type = "nstr";
+		      newID->variableType = 0;
 		      newID->value = val;
 		      nowType = -1;
 		      Insert(Top(SymbolTables)->table, newID);
@@ -307,24 +266,9 @@ constant_declar:LET IDENTIFIER COLON type ASSIGN constant_expr
 		      char *temp = strdup($4);
 		      void *val = (void*)temp;
 		      newID->type = "nbool";
+		      newID->variableType = 0;
 		      newID->value = val;
 		      nowType = -1;
-
-		      if(Top(SymbolTables)->tableName == 1){
-			printtab(tabNum);
-			fprintf(Instructions, "field static int %s = %d\n", $2, ((strcmp($4,"true")==0)?1:0));
-			newID->globalORlocal = 0;
-		      }
-		      else{
-			printtab(tabNum);
-			fprintf(Instructions, "sipush %d\n", (strcmp($4, "true")==0?1:0));
-			printtab(tabNum);
-			fprintf(Instructions, "istore %d\n", nowStkIndex);
-			newID->stkIndex = nowStkIndex;
-			nowStkIndex++;
-			newID->globalORlocal = 1;
-		      }
-
 		      Insert(Top(SymbolTables)->table, newID);
 		    }
 		    else{
@@ -357,6 +301,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      int *temp = (int*)malloc(sizeof(int));
 		      *temp = atoi($7);
 		      void *val = (void*)temp;
+		      newID->variableType = 1;
 		      newID->type = "int";
 		      newID->value = val;
 		      nowType = -1;
@@ -389,6 +334,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      float *temp = (float*)malloc(sizeof(float));
 		      *temp = atof($7);
 		      void *val = (void*)temp;
+		      newID->variableType = 1;
 		      newID->type = "float";
 		      newID->value = val;
 		      nowType = -1;
@@ -405,6 +351,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      char *temp = strdup($7);
 		      void *val = (void*)temp;
 		      newID->type = "str";
+		      newID->variableType = 1;
 		      newID->value = val;
 		      nowType = -1;
 		      if(existed == 0){
@@ -420,6 +367,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		      char *temp = strdup($7);
 		      void *val = (void*)temp;
 		      newID->type = "bool";
+		      newID->variableType = 1;
 		      newID->value = val;
 		      nowType = -1;
 
@@ -459,7 +407,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    newID = CreateID($3);
 		    existed = 0;
 		  }
-
+		  newID->variableType = 1;
 		  if(newID->value == NULL){
 		    newID->type = $5;
 		  }
@@ -505,6 +453,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    int *temp = (int*)malloc(sizeof(int));
 		    *temp = atoi($5);
 		    void *val = (void*)temp;
+		    newID->variableType = 1;
 		    newID->type = "nint";
 		    newID->value = val;
 		    nowType = -1;
@@ -533,6 +482,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    *temp = atof($5);
 		    void *val = (void*)temp;
 		    newID->type = "nfloat";
+		    newID->variableType = 1;
 		    newID->value = val;
 		    nowType = -1;
 		    if(existed == 0){
@@ -543,6 +493,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    char *temp = strdup($5);
 		    void *val = (void*)temp;
 		    newID->type = "nstr";
+		    newID->variableType = 1;
 		    newID->value = val;
 		    nowType = -1;
 		    if(existed == 0){
@@ -553,6 +504,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		    char *temp = strdup($5);
 		    void *val = (void*)temp;
 		    newID->type = "nbool";
+		    newID->variableType = 1;
 		    newID->value = val;
 		    nowType = -1;
 
@@ -586,7 +538,7 @@ variable_declar:LET MUT IDENTIFIER COLON type ASSIGN constant_expr
 		  Trace("Reducing to variable declaration w/ no type and initial value\n");
 		  if(Search(Top(SymbolTables)->table, $3) == NULL){
 		    ID *newID = CreateID($3);
-
+		    newID->variableType = 1;
 		    if(Top(SymbolTables)->tableName == 1){
 		      printtab(tabNum);
 		      fprintf(Instructions, "field static int %s\n", $3);
@@ -734,6 +686,7 @@ func_argument:	func_argument COMMA IDENTIFIER COLON type
 		  if(newID == NULL){
 		    newID = CreateID($3);
 		    newID->type = $5;
+		    newID->variableType = 1;
 		    newID->stkIndex = nowStkIndex;
 		    nowStkIndex++;
 		    newID->globalORlocal = 1;
@@ -749,6 +702,7 @@ func_argument:	func_argument COMMA IDENTIFIER COLON type
 		  if(newID == NULL){
 		    newID = CreateID($1);
 		    newID->type = $3;
+		    newID->variableType = 1;
 		    newID->stkIndex = nowStkIndex;
 		    nowStkIndex++;
 		    newID->globalORlocal = 1;
@@ -845,13 +799,15 @@ simple_stmt:	IDENTIFIER ASSIGN expr
 		    printf("Error: Undefined variable\n");
 		    exit(1);
 		  }
-		  if(newID->globalORlocal == 1){
-		    printtab(tabNum);
-		    fprintf(Instructions, "istore %d\n", newID->stkIndex);
-		  }
-		  else if(newID->globalORlocal == 0){
-		    printtab(tabNum);
-		    fprintf(Instructions, "putstatic int project3.%s\n", newID->name);
+		  if(newID->variableType == 1){
+		    if(newID->globalORlocal == 1){
+		      printtab(tabNum);
+		      fprintf(Instructions, "istore %d\n", newID->stkIndex);
+		    }
+		    else if(newID->globalORlocal == 0){
+		      printtab(tabNum);
+		      fprintf(Instructions, "putstatic int project3.%s\n", newID->name);
+		    }
 		  }
 		  switch(nowType){
 		    case 0:
@@ -1008,13 +964,15 @@ expr:		integer_expr
 		  else{
 		    printf("Error: Can't print type %s variable\n", newID->type);
 		  }
-		  if(newID->globalORlocal == 0){
-		    printtab(tabNum);
-		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
-		  }
-		  else{
-		    printtab(tabNum);
-		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		  if(newID->variableType == 1){
+		    if(newID->globalORlocal == 0){
+		      printtab(tabNum);
+		      fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		    }
+		    else{
+		      printtab(tabNum);
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    }
 		  }
 		}
 		|
@@ -1076,15 +1034,6 @@ integer_expr:	integer_expr PLUS integer_expr
 		|
 		integer_expr DIVIDE integer_expr
 		{
-/*
-		  if(nowType == 0){
-		    sprintf($$, "%d", atoi($1) / atoi($3));
-		    nowType = 1;
-		  }
-		  else if(nowType == 1){
-		    sprintf($$, "%f", (atof($1) / atof($3)));
-		    nowType = 1;
-		  }*/
 		  printtab(tabNum);
 		  fprintf(Instructions, "idiv\n");
 		}
@@ -1131,13 +1080,19 @@ integer_expr:	integer_expr PLUS integer_expr
 		    printf("Error: Undefined variable\n");
 		    exit(1);
 		  }
-		  if(newID->globalORlocal == 0){
-		    printtab(tabNum);
-  		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		  if(newID->variableType == 1){
+		    if(newID->globalORlocal == 0){
+		      printtab(tabNum);
+  		      fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		    }
+		    else{
+		      printtab(tabNum);
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    }
 		  }
-		  else{
+		  else if(newID->variableType == 0){
 		    printtab(tabNum);
-		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
 		  }
 		}
 		;
@@ -1287,15 +1242,25 @@ boolean_expr:	boolean_expr AND boolean_expr
 		    printf("Error: Undefined variable\n");
 		    exit(1);
 		  }
-		  if(newID->globalORlocal == 0){
-  		    printtab(tabNum);
-  		    fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		  if(newID->variableType == 1){
+		    if(newID->globalORlocal == 0){
+  		      printtab(tabNum);
+  		      fprintf(Instructions, "getstatic int project3.%s\n", newID->name);
+		    }
+		    else{
+  		      printtab(tabNum);
+		      fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		    }
 		  }
-		  else{
-  		    printtab(tabNum);
-		    fprintf(Instructions, "iload %d\n", newID->stkIndex);
+		  else if(newID->variableType == 0){
+		    printtab(tabNum);
+		    if(strcmp("true", (char*)newID->value)==0 || strcmp("false", (char*)newID->value)==0){
+		      fprintf(Instructions, "iconst_%d\n", (strcmp("true", (char*)newID->value)==0?1:0));
+		    }
+		    else{
+		      fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
+		    }
 		  }
-
 		  $$ = $1;
 		}
 		|

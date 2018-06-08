@@ -686,6 +686,7 @@ func_argument:	func_argument COMMA IDENTIFIER COLON type
 		  if(newID == NULL){
 		    newID = CreateID($3);
 		    newID->type = $5;
+		    newID->variableType = 1;
 		    newID->stkIndex = nowStkIndex;
 		    nowStkIndex++;
 		    newID->globalORlocal = 1;
@@ -701,6 +702,7 @@ func_argument:	func_argument COMMA IDENTIFIER COLON type
 		  if(newID == NULL){
 		    newID = CreateID($1);
 		    newID->type = $3;
+		    newID->variableType = 1;
 		    newID->stkIndex = nowStkIndex;
 		    nowStkIndex++;
 		    newID->globalORlocal = 1;
@@ -1252,7 +1254,12 @@ boolean_expr:	boolean_expr AND boolean_expr
 		  }
 		  else if(newID->variableType == 0){
 		    printtab(tabNum);
-		    fprintf(Instructions, "iconst_%s\n", (strcmp("true", (char*)newID->value)==0?"1", "0"));
+		    if(strcmp("true", (char*)newID->value)==0 || strcmp("false", (char*)newID->value)==0){
+		      fprintf(Instructions, "iconst_%d\n", (strcmp("true", (char*)newID->value)==0?1:0));
+		    }
+		    else{
+		      fprintf(Instructions, "sipush %d\n", *(int*)newID->value);
+		    }
 		  }
 		  $$ = $1;
 		}

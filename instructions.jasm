@@ -1,37 +1,40 @@
 class project3
 {
-	field static int a = 1
-	field static int b = 1
-	field static int e = 2
-	field static int f = 0
-	field static int g
 	method public static void main(java.lang.String[])
 	max_stack 15
 	max_locals 15
 	{
-		getstatic int project3.e
-		getstatic int project3.a
-		irem
-		putstatic int project3.b
-		getstatic int project3.b
 		sipush 0
-		isub
-		ifeq L0
-		iconst_0
-		goto L1
+		istore 0
+		sipush 0
+		istore 1
 L0:
-		iconst_1
+		iload 1
+		sipush 10
+		isub
+		ifle L1
+		iconst_0
+		goto L2
 L1:
-		ifeq L2
-		getstatic java.io.PrintStream java.lang.System.out
-		ldc "2 % 1 = 1"
-		invokevirtual void java.io.PrintStream.println(java.lang.String)
-		goto L3
+		iconst_1
 L2:
-		getstatic java.io.PrintStream java.lang.System.out
-		ldc "2 % 1 = 0"
-		invokevirtual void java.io.PrintStream.println(java.lang.String)
+		ifeq L3
+		iload 0
+		iload 1
+		iadd
+		istore 0
+		iload 1
+		sipush 1
+		iadd
+		istore 1
+		goto L0
 L3:
+		getstatic java.io.PrintStream java.lang.System.out
+		ldc "The sum is "
+		invokevirtual void java.io.PrintStream.print(java.lang.String)
+		getstatic java.io.PrintStream java.lang.System.out
+		iload 0
+		invokevirtual void java.io.PrintStream.println(int)
 		return
 	}
 }

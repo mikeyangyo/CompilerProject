@@ -1,2 +1,2 @@
 # CompilerProject3
-**An simple `rust` compiler**
+**A simple `rust` compiler**
